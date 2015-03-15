@@ -1,0 +1,19 @@
+{
+  "name": "bitBlaster",
+  "version": "0.0.1",
+  "description": "A top-down, scrolling space shoot-em-up",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacobdlewis/bitBlaster.git"
+  },
+  "author": "Jacob Lewis <jacobdlewis@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jacobdlewis/bitBlaster/issues"
+  },
+  "homepage": "https://github.com/jacobdlewis/bitBlaster"
+}
