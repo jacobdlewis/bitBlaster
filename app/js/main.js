@@ -1,20 +1,24 @@
 'use strict'
-var game = new Phaser.Game(400, 400, Phaser.AUTO, 'game-holder',
+var game = new Phaser.Game(400, 500, Phaser.AUTO, 'game-holder',
            { preload: preload, create: create, update: update });
 
 var sprite;
 var player;
+var baddie1;
 var cursors;
 var starfield;
 var bullets;
 var bullet;
 var bulletTime = 0;
+var score=0;
+var scoreText;
 
 function preload() {
 
   game.load.image('starfield', 'app/assets/starfield_background.png');
   game.load.image('player', 'app/assets/spaceship.png');
   game.load.image('bullet', 'app/assets/purple_ball.png');
+  game.load.image('baddie1', 'app/assets/shmup-baddie.png');
   //game.load.atlasJSONHash('laser', 'app/assets/beams.png', 'app/assets/beams.json');
 }
 
@@ -25,15 +29,31 @@ function create() {
   cursors = game.input.keyboard.createCursorKeys();
 
   //add image assets to game
-  starfield = game.add.tileSprite(0, 0, 400, 400, 'starfield');
+  starfield = game.add.tileSprite(0, 0, 400, 500, 'starfield');
   player = game.add.sprite(180, 560, 'player');
   //laser = game.add.sprite(2, 2, 'laser');
+  //create game score
+  scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#fff' });
+
 
   //add physics to player's ship
   game.physics.arcade.enable(player);
   player.body.gravity.y = 0;
   player.body.bounce.y = 0;
   player.body.collideWorldBounds = true;
+
+  //baddie group & physics
+  baddie1 = game.add.group();
+  baddie1.enableBody = true;
+  baddie1.physicsBodyType = Phaser.Physics.ARCADE;
+
+  for (var i = 0; i < 50; i++) {
+    var c = baddie1.create(game.world.randomX,
+                           (Math.random() * 150) + 50,
+                           'baddie1', game.rnd.integerInRange(0, 40));
+    c.name = 'bad' + i;
+    c.body.immovable = true;
+  }
 
   //bullet group & physics
   bullets = game.add.group();
@@ -56,6 +76,8 @@ function create() {
 }
 
 function update() {
+  //check for hits/collisions
+  game.physics.arcade.overlap(bullets, baddie1, collisionHandler, null, this);
   //scroll starfield background vertically
   starfield.tilePosition.y += 2;
 
@@ -88,6 +110,8 @@ function update() {
     fireBullet();
   }
 
+}
+
   function fireBullet() {
     if (game.time.now > bulletTime)
     {
@@ -102,8 +126,15 @@ function update() {
     }
   }
 
-  // function resetBullet(bullet) {
-  //   bullet.kill();
-  // }
+  function collisionHandler (bullet, baddie1) {
+    bullet.kill();
+    baddie1.kill();
 
-}
+    //  Add and update the score
+    score += 10;
+    scoreText.text = 'Score: ' + score;
+  }
+
+  function resetBullet(bullet) {
+    bullet.kill();
+  }
