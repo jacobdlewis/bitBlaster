@@ -2,7 +2,9 @@
 var game = new Phaser.Game(400, 500, Phaser.AUTO, 'game-holder',
            { preload: preload, create: create, update: update });
 
-var sprite;
+var laser;
+var explodeBaddie;
+var kaplow;
 var player;
 var baddie1;
 var cursors;
@@ -19,10 +21,18 @@ function preload() {
   game.load.image('player', 'app/assets/spaceship.png');
   game.load.image('bullet', 'app/assets/purple_ball.png');
   game.load.image('baddie1', 'app/assets/shmup-baddie.png');
-  //game.load.atlasJSONHash('laser', 'app/assets/beams.png', 'app/assets/beams.json');
+  game.load.audio('laser', 'app/assets/blaster.mp3');
+  game.load.audio('explodeBaddie', 'app/assets/explosion.mp3');
+  game.load.image('kaplow', 'app/assets/explosion.png', 128, 128);
 }
 
 function create() {
+  //add audio clips to game
+  laser = game.add.audio('laser');
+  explodeBaddie = game.add.audio('explodeBaddie');
+
+  //set world bounds
+  game.world.setBounds(0, 0, 400, 500);
 
   //create physics & cursors
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -31,7 +41,7 @@ function create() {
   //add image assets to game
   starfield = game.add.tileSprite(0, 0, 400, 500, 'starfield');
   player = game.add.sprite(180, 560, 'player');
-  //laser = game.add.sprite(2, 2, 'laser');
+
   //create game score
   scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#fff' });
 
@@ -123,6 +133,7 @@ function update() {
         bullet.reset(player.x + 12, player.y - 8);
         bullet.body.velocity.y = -300;
         bulletTime = game.time.now + 150;
+        laser.play('');
       }
     }
   }
@@ -130,6 +141,7 @@ function update() {
   function collisionHandler (bullet, baddie1) {
     bullet.kill();
     baddie1.kill();
+    explodeBaddie.play('');
     //  Add and update the score
     score += 50;
     scoreText.text = 'Score: ' + score;
