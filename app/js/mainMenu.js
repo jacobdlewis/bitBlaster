@@ -18,11 +18,12 @@
 
     game.add.sprite(0, 0, 'menu');
 
-    var enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-    enterKey.onDown.add(startLvl1);
+    var spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    spacebar.onDown.add(startLvl1);
   }
 
   function startLvl1() {
-    this.game.state.start('lvl1');
+    this.game.state.start('playgame');
+    console.log('bananananasssss!');
   }
 })();

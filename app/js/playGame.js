@@ -1,6 +1,6 @@
-'use strict'
-var game = new Phaser.Game(400, 500, Phaser.AUTO, 'game-holder',
-           { preload: preload, create: create, update: update });
+
+(function(){
+  game.state.add('playgame', {preload:preload, create:create, update: update});
 
 var laser;
 var explodeBaddie;
@@ -17,13 +17,6 @@ var scoreText;
 
 function preload() {
 
-  game.load.image('starfield', 'app/assets/starfield_background.png');
-  game.load.image('player', 'app/assets/heroShip.png');
-  game.load.image('bullet', 'app/assets/purple_ball.png');
-  game.load.image('baddie1', 'app/assets/shmup-baddie.png');
-  game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
-  game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
-  game.load.image('kaplow', 'app/assets/explosion.png', 128, 128);
 }
 
 function create() {
@@ -32,14 +25,14 @@ function create() {
   explodeBaddie = game.add.audio('explodeBaddie');
 
   //set world bounds
-  game.world.setBounds(0, 0, 400, 500);
+  game.world.setBounds(0, 0, 400, 600);
 
   //create physics & cursors
   game.physics.startSystem(Phaser.Physics.ARCADE);
   cursors = game.input.keyboard.createCursorKeys();
 
   //add image assets to game
-  starfield = game.add.tileSprite(0, 0, 400, 500, 'starfield');
+  starfield = game.add.tileSprite(0, 0, 400, 600, 'starfield');
   player = game.add.sprite(180, 560, 'player');
 
   //create game score
@@ -139,3 +132,4 @@ function collisionHandler (bullet, baddie1) {
 function resetBullet(bullet) {
   bullet.kill();
 }
+})();
