@@ -5,7 +5,7 @@
     var laser;
     var explodeBaddie;
     var player;
-    var baddie1;
+    var firstBaddieGroup;
     var cursors;
     var starfield;
     var bulletGroup;
@@ -13,8 +13,12 @@
     var bulletTime = 0;
     var score=0;
     var scoreText;
+    var nextBaddie = 0;
+
+
 
 function create() {
+
   //add audio clips to game
     laser = game.add.audio('laser');
     explodeBaddie = game.add.audio('explodeBaddie');
@@ -33,6 +37,9 @@ function create() {
   //create game score
     scoreText = game.add.text(8, 8, 'score: 0', { fontSize: '32px', fill: 'white' });
 
+  //add clock
+    clock = game.time;
+
   //add physics to player's ship
     game.physics.arcade.enable(player);
     player.body.gravity.y = 0;
@@ -41,22 +48,15 @@ function create() {
     player.body.collideWorldBounds = true;
 
   //baddie group & physics
-    baddie1 = this.add.group();
-    baddie1.enableBody = true;
-    baddie1.physicsBodyType = Phaser.Physics.ARCADE;
-    baddie1.createMultiple(20, 'baddie1');
-    baddie1.setAll('anchor.x', 0.5);
-    baddie1.setAll('anchor.y', 0.5);
-    baddie1.setAll('outOfBoundsKill', true);
-    baddie1.setAll('checkWorldBounds', true);
+    firstBaddieGroup = game.add.group();
+    firstBaddieGroup.enableBody = true;
+    firstBaddieGroup.physicsBodyType = Phaser.Physics.ARCADE;
+    firstBaddieGroup.createMultiple(20, 'firstBaddieGroup');
+    firstBaddieGroup.setAll('anchor.x', 0.5);
+    firstBaddieGroup.setAll('anchor.y', 0.5);
+    firstBaddieGroup.setAll('outOfBoundsKill', true);
+    firstBaddieGroup.setAll('checkWorldBounds', true);
 
-    for (var i = 0; i < 20; i++) {
-      var c = baddie1.create(game.world.randomX -20,
-                             (Math.random() * 150) + 50,
-                             'baddie1', game.rnd.integerInRange(0, 20));
-      c.name = 'bad' + i;
-      c.body.immovable = true;
-    }
 
   //bullet group & physics
   bulletGroup = this.add.group();
@@ -79,8 +79,8 @@ function create() {
 
 function update() {
   //check for hits/collisions
-  this.game.physics.arcade.overlap(bulletGroup, baddie1, collisionHandler, null, this);
-  this.game.physics.arcade.overlap(player, baddie1, checkPlayerCollision, null, this);
+  this.game.physics.arcade.overlap(bulletGroup, firstBaddieGroup, collisionHandler, null, this);
+  this.game.physics.arcade.overlap(player, firstBaddieGroup, checkPlayerCollision, null, this);
   //scroll starfield background vertically
   starfield.tilePosition.y += 2;
 
@@ -101,9 +101,32 @@ function update() {
   if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
     fireBullet();
   }
+
+ //addEnemy();
+ // for (var i = 0; i < 1; i++) {
+ //      var c = firstBaddieGroup.create(game.world.randomX -20,
+ //                             (Math.random() * 150) + 50,
+ //                             'firstBaddieGroup', game.rnd.integerInRange(0, 20));
+ //      c.name = 'bad' + i;
+ //      c.body.immovable = true;
+ //    }
+  if (game.time.now > nextBaddie) {
+    addEnemy();
+    nextBaddie = game.time.now + 1000;
+  }
+
 }
 
 //functions
+function addEnemy() {
+  var i = 0;
+  var enemy = firstBaddieGroup.create(game.world.randomX -20,
+                             (Math.random() * 150) + 50,
+                             'firstBaddieGroup', game.rnd.integerInRange(0, 20));
+      enemy.body.immovable = true;
+      enemy.name = 'baddie' + i;
+      i++;
+}
 
 function fireBullet() {
   if (game.time.now > bulletTime)
@@ -111,22 +134,22 @@ function fireBullet() {
     bullet = bulletGroup.getFirstExists(false);
     if (bullet)
     {
-      bullet.reset(player.x - 9, player.y - 23);
+      bullet.reset(player.x , player.y - 23);
       bullet.body.velocity.y = -300;
-      bulletTime = game.time.now + 25;
+      bulletTime = game.time.now + 225;
       laser.play('');
     }
   }
 }
-function checkPlayerCollision (player, baddie1) {
+function checkPlayerCollision (player, firstBaddieGroup) {
   player.kill();
   explodeBaddie.play('');
   game.state.start('gameOver');
 }
 
-function collisionHandler (bullet, baddie1) {
+function collisionHandler (bullet, firstBaddieGroup) {
   bullet.kill();
-  baddie1.kill();
+  firstBaddieGroup.kill();
   explodeBaddie.play('');
   //  Add and update the score
   score += 50;

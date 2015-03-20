@@ -6,7 +6,7 @@
     game.load.image('starfield', 'app/assets/starfield_background.png');
     game.load.image('player', 'app/assets/heroShip.png');
     game.load.image('bullet', 'app/assets/greenLaser.png');
-    game.load.image('baddie1', 'app/assets/shmup-baddie.png');
+    game.load.image('firstBaddieGroup', 'app/assets/shmup-baddie.png');
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
     game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
     game.load.image('kaplow', 'app/assets/explosion.png', 128, 128);
