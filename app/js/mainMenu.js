@@ -5,7 +5,7 @@
   function preload(){
     game.load.image('starfield', 'app/assets/starfield_background.png');
     game.load.image('player', 'app/assets/heroShip.png');
-    game.load.image('bullet', 'app/assets/purple_ball.png');
+    game.load.image('bullet', 'app/assets/greenLaser.png');
     game.load.image('baddie1', 'app/assets/shmup-baddie.png');
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
     game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
