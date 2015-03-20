@@ -121,6 +121,7 @@ function fireBullet() {
 function checkPlayerCollision (player, baddie1) {
   player.kill();
   explodeBaddie.play('');
+  game.state.start('gameOver');
 }
 
 function collisionHandler (bullet, baddie1) {

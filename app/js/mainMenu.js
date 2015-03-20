@@ -11,6 +11,7 @@
     game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
     game.load.image('kaplow', 'app/assets/explosion.png', 128, 128);
     game.load.image('menu', 'app/assets/startMenu.png');
+    game.load.image('gameOverMenu', 'app/assets/gameOver.png');
   }
 
   function create(){
@@ -24,6 +25,5 @@
 
   function startLvl1() {
     this.game.state.start('playgame');
-    console.log('bananananasssss!');
   }
 })();
