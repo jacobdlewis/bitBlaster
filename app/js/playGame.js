@@ -51,7 +51,6 @@ function create() {
     firstBaddieGroup = game.add.group();
     firstBaddieGroup.enableBody = true;
     firstBaddieGroup.physicsBodyType = Phaser.Physics.ARCADE;
-    firstBaddieGroup.createMultiple(20, 'firstBaddieGroup');
     firstBaddieGroup.setAll('anchor.x', 0.5);
     firstBaddieGroup.setAll('anchor.y', 0.5);
     firstBaddieGroup.setAll('outOfBoundsKill', true);
@@ -79,8 +78,9 @@ function create() {
 
 function update() {
   //check for hits/collisions
-  this.game.physics.arcade.overlap(bulletGroup, firstBaddieGroup, collisionHandler, null, this);
-  this.game.physics.arcade.overlap(player, firstBaddieGroup, checkPlayerCollision, null, this);
+  this.game.physics.arcade.collide(bulletGroup, firstBaddieGroup, collisionHandler);
+  this.game.physics.arcade.collide(player, firstBaddieGroup, checkPlayerCollision);
+
   //scroll starfield background vertically
   starfield.tilePosition.y += 2;
 
@@ -110,9 +110,12 @@ function update() {
  //      c.name = 'bad' + i;
  //      c.body.immovable = true;
  //    }
+  console.log(firstBaddieGroup.children.length);
+  if (firstBaddieGroup.children.length < 5) {
   if (game.time.now > nextBaddie) {
     addEnemy();
     nextBaddie = game.time.now + 1000;
+    }
   }
 
 }
@@ -134,6 +137,7 @@ function fireBullet() {
     bullet = bulletGroup.getFirstExists(false);
     if (bullet)
     {
+      bullet.anchor.setTo(0.5, 0.5);
       bullet.reset(player.x , player.y - 23);
       bullet.body.velocity.y = -300;
       bulletTime = game.time.now + 225;
@@ -147,8 +151,8 @@ function checkPlayerCollision (player, firstBaddieGroup) {
   game.state.start('gameOver');
 }
 
-function collisionHandler (bullet, firstBaddieGroup) {
-  bullet.kill();
+function collisionHandler (bulletGroup, firstBaddieGroup) {
+  bulletGroup.kill();
   firstBaddieGroup.kill();
   explodeBaddie.play('');
   //  Add and update the score

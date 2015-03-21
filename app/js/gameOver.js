@@ -1,7 +1,6 @@
 (function(){
   game.state.add('gameOver', {create:create});
 
-
   function create(){
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
