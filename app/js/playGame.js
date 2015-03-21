@@ -13,7 +13,7 @@
     var bulletTime = 0;
     var score=0;
     var scoreText;
-    var nextBaddie = 0;
+    var nextBaddieTick = 0;
 
 
 
@@ -54,7 +54,6 @@ function create() {
     firstBaddieGroup.setAll('anchor.x', 0.5);
     firstBaddieGroup.setAll('anchor.y', 0.5);
     firstBaddieGroup.setAll('outOfBoundsKill', true);
-    firstBaddieGroup.setAll('checkWorldBounds', true);
 
 
   //bullet group & physics
@@ -80,6 +79,8 @@ function update() {
   //check for hits/collisions
   this.game.physics.arcade.collide(bulletGroup, firstBaddieGroup, collisionHandler);
   this.game.physics.arcade.collide(player, firstBaddieGroup, checkPlayerCollision);
+  this.game.physics.arcade.collide(firstBaddieGroup, firstBaddieGroup);
+  this.game.physics.arcade.collide(firstBaddieGroup, game.world.bounds);
 
   //scroll starfield background vertically
   starfield.tilePosition.y += 2;
@@ -102,19 +103,10 @@ function update() {
     fireBullet();
   }
 
- //addEnemy();
- // for (var i = 0; i < 1; i++) {
- //      var c = firstBaddieGroup.create(game.world.randomX -20,
- //                             (Math.random() * 150) + 50,
- //                             'firstBaddieGroup', game.rnd.integerInRange(0, 20));
- //      c.name = 'bad' + i;
- //      c.body.immovable = true;
- //    }
-  console.log(firstBaddieGroup.children.length);
-  if (firstBaddieGroup.children.length < 5) {
-  if (game.time.now > nextBaddie) {
-    addEnemy();
-    nextBaddie = game.time.now + 1000;
+  if (firstBaddieGroup.countLiving() < 50) {
+    if (game.time.now > nextBaddieTick) {
+      addEnemy();
+      nextBaddieTick = game.time.now + 10;
     }
   }
 
@@ -123,11 +115,12 @@ function update() {
 //functions
 function addEnemy() {
   var i = 0;
-  var enemy = firstBaddieGroup.create(game.world.randomX -20,
-                             (Math.random() * 150) + 50,
-                             'firstBaddieGroup', game.rnd.integerInRange(0, 20));
+  var enemy = firstBaddieGroup.create((Math.random() * 370), (Math.random() * 150) + 30, 'firstBaddieGroup', game.rnd.integerInRange(0, 20));
       enemy.body.immovable = true;
+      enemy.body.velocity.y = 2;
       enemy.name = 'baddie' + i;
+      enemy.anchor.setTo = (0.5, 0.5);
+      enemy.checkWorldBounds = true;
       i++;
 }
 
@@ -150,6 +143,7 @@ function checkPlayerCollision (player, firstBaddieGroup) {
   explodeBaddie.play('');
   game.state.start('gameOver');
 }
+
 
 function collisionHandler (bulletGroup, firstBaddieGroup) {
   bulletGroup.kill();
