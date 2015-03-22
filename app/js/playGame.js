@@ -1,30 +1,33 @@
 
 (function(){
-  game.state.add('playgame', {create:create, update: update, render: render});
+  game.state.add('playgame', {create:create, update: update});
 
     var laser;
-    var explodeBaddie;
+    var explodeUFO;
     var player;
     var alienShipGroup;
     var cursors;
     var starfield;
     var playerBulletGroup;
-    var enemyBulletGroup;
     var bulletTime = 0;
-    var enemyBulletTime = 0;
     var bullet;
-    var enemyBullet;
     var score=0;
     var scoreText;
-    var nextBaddieTick = 0;
     var enemy;
     var alienDeathEmitter;
+    var nextUFOTick = 0;
+    var maxUFOs = 5;
+    var timeBeforeNextUFO = 1000;
+    var enemyBulletGroup;
+    var enemyBullet;
+    var enemyBulletTime = 0;
+
 
 function create() {
 
   //add audio clips & sprites to game
     laser = game.add.audio('laser');
-    explodeBaddie = game.add.audio('explodeBaddie');
+    explodeUFO = game.add.audio('explodeUFO');
     starfield = game.add.tileSprite(0, 0, 600, 600, 'starfield');
     player = game.add.sprite(200, 580, 'player');
     alienDeathEmitter = game.add.emitter(0, 0, 100);
@@ -47,7 +50,7 @@ function create() {
     player.body.setSize(20, 20, 0, 5);
     player.body.collideWorldBounds = true;
 
-  //baddie group & physics
+  //UFO group & physics
     alienShipGroup = game.add.group();
     alienShipGroup.enableBody = true;
     alienShipGroup.physicsBodyType = Phaser.Physics.ARCADE;
@@ -84,8 +87,7 @@ function update() {
   //scroll starfield background vertically
   starfield.tilePosition.y += 3;
 
-  // //check for input to move player
-
+  //check for input to move player
   if (cursors.left.isDown) {
     player.body.velocity.x = -200;
   } else if (cursors.right.isDown) {
@@ -102,29 +104,21 @@ function update() {
     fireBullet(enemyBullet, player);
   }
 
-  if (alienShipGroup.countLiving() < 5) {
-    if (game.time.now > nextBaddieTick) {
+  if (alienShipGroup.countLiving() < maxUFOs) {
+    if (game.time.now > nextUFOTick) {
       addEnemy();
       fireEnemyBullet();
-      nextBaddieTick = game.time.now + 1000;
+      nextUFOTick = game.time.now + timeBeforeNextUFO;
     }
   }
 }
 
-function render() {
-  game.debug.body(enemyBullet);
-  game.debug.body(enemyBulletGroup);
-  game.debug.body(player);
-  game.debug.body(alienShipGroup);
-  game.debug.body(enemy);
-}
-
 //functions
 function addEnemy() {
-      enemy = alienShipGroup.create((Math.random() * 370), (Math.random() * 150) + 30, 'alienShipGroup', game.rnd.integerInRange(0, 20));
+      enemy = alienShipGroup.create((Math.random() * 570), (Math.random() * 100) + 30, 'alienShipGroup', game.rnd.integerInRange(0, 20));
       enemy.body.setSize(25, 25, 3, -1);
       enemy.anchor.setTo = (0.5, 0.5);
-      enemy.body.velocity.y = getRandomArbitrary(100, 200);
+      enemy.body.velocity.y = getRandomArbitrary(125, 300);
       enemy.body.velocity.x = getRandomArbitrary(-100, 100);
       enemy.checkWorldBounds = true;
       enemy.outOfBoundsKill = true;
@@ -159,10 +153,15 @@ function fireEnemyBullet() {
   }
 }
 
+function increaseUFOSpawnRateAndNumber() {
+  maxUFOs +=1;
+  timeBeforeNextUFO -=100;
+}
+
 function checkPlayerTouchingAlien (player, alienShipGroup) {
   player.kill();
   alienShipGroup.kill();
-  explodeBaddie.play('');
+  explodeUFO.play('');
   game.state.start('gameOver');
 }
 
@@ -183,16 +182,20 @@ function getRandomArbitrary(min, max) {
 function checkAlienBulletHitPlayer (enemyBulletGroup, player) {
   enemyBulletGroup.kill();
   player.kill();
-  explodeBaddie.play('');
+  explodeUFO.play('');
   game.state.start('gameOver');
 }
 function checkPlayerBulletHitAlien (playerBulletGroup, alienShipGroup) {
   playerBulletGroup.kill();
   alienShipGroup.kill();
-  explodeBaddie.play('');
+  explodeUFO.play('');
   blowUpAliens(alienShipGroup);
   //  Add and update the score
   score += 50;
   scoreText.text = 'Score: ' + score;
+
+   if (score % 500 === 0 && maxUFOs <10) {
+    increaseUFOSpawnRateAndNumber();
+  }
 }
 })();

@@ -13,13 +13,13 @@
     game.load.image('alienDeathParticle', 'app/assets/alienDeathParticle.png');
 
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
-    game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
+    game.load.audio('explodeUFO', 'app/assets/sfx/explosion.mp3');
   }
 
   function create(){
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    game.add.sprite(0, 0, 'menu');
+    game.add.sprite(100, 0, 'menu');
 
     var spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.add(startLvl1);

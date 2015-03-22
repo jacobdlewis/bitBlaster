@@ -2,7 +2,7 @@
   game.state.add('gameOver', {create:create});
 
   function create(){
-    game.add.sprite(0, 0, 'gameOverMenu');
+    game.add.sprite(100, 0, 'gameOverMenu');
 
     var spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.add(restartGame);
