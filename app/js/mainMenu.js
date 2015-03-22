@@ -5,13 +5,12 @@
   function preload(){
     game.load.image('starfield', 'app/assets/starfield_background.png');
     game.load.image('player', 'app/assets/heroShip.png');
-    game.load.image('playerBullet', 'app/assets/greenLaser.png');
-    game.load.image('alienShipGroup', 'app/assets/alienShip.png');
+    game.load.image('playerBullet', 'app/assets/playerBullet.png');
+    game.load.image('UFOShipGroup', 'app/assets/UFOShip.png');
     game.load.image('menu', 'app/assets/startMenu.png');
     game.load.image('gameOverMenu', 'app/assets/gameOver.png');
     game.load.image('enemyBullet', 'app/assets/enemyBullet.png');
-    game.load.image('alienDeathParticle', 'app/assets/alienDeathParticle.png');
-
+    game.load.image('UFODeathParticle', 'app/assets/UFODeathParticle.png');
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
     game.load.audio('explodeUFO', 'app/assets/sfx/explosion.mp3');
   }
