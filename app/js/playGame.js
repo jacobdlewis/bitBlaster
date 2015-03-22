@@ -2,13 +2,13 @@
 (function(){
   game.state.add('playgame', {create:create, update: update});
 
+    var starfield;
     var laser;
+    var playerBulletGroup;
     var explodeUFO;
     var player;
     var alienShipGroup;
     var cursors;
-    var starfield;
-    var playerBulletGroup;
     var bulletTime = 0;
     var bullet;
     var score=0;
@@ -101,7 +101,7 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-    fireBullet(enemyBullet, player);
+    fireBullet();
   }
 
   if (alienShipGroup.countLiving() < maxUFOs) {
@@ -139,14 +139,14 @@ function fireBullet() {
   }
 }
 function fireEnemyBullet() {
-  if (game.time.now > bulletTime)
+  if (game.time.now > enemyBulletTime)
   {
     enemyBullet = enemyBulletGroup.getFirstExists(false);
     if (enemyBullet)
     {
       enemyBullet.anchor.setTo(0.5, 0.5);
       enemyBullet.reset(enemy.x , enemy.y + 32);
-      enemyBulletTime = game.time.now + 225;
+      enemyBulletTime = game.time.now + 100;
       game.physics.arcade.moveToObject(enemyBullet,player,250);
       laser.play('');
     }
