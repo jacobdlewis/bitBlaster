@@ -25,14 +25,14 @@ function create() {
   //add audio clips & sprites to game
     laser = game.add.audio('laser');
     explodeBaddie = game.add.audio('explodeBaddie');
-    starfield = game.add.tileSprite(0, 0, 400, 600, 'starfield');
+    starfield = game.add.tileSprite(0, 0, 600, 600, 'starfield');
     player = game.add.sprite(200, 580, 'player');
     alienDeathEmitter = game.add.emitter(0, 0, 100);
     alienDeathEmitter.makeParticles('alienDeathParticle');
     alienDeathEmitter.gravity = 200;
 
   //set world bounds, physics, cursors
-    game.world.setBounds(0, 0, 400, 600);
+    game.world.setBounds(0, 0, 600, 600);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -105,7 +105,7 @@ function update() {
   if (alienShipGroup.countLiving() < 5) {
     if (game.time.now > nextBaddieTick) {
       addEnemy();
-      fireEnemyBullet(); 
+      fireEnemyBullet();
       nextBaddieTick = game.time.now + 1000;
     }
   }
@@ -115,11 +115,14 @@ function render() {
   game.debug.body(enemyBullet);
   game.debug.body(enemyBulletGroup);
   game.debug.body(player);
+  game.debug.body(alienShipGroup);
+  game.debug.body(enemy);
 }
 
 //functions
 function addEnemy() {
       enemy = alienShipGroup.create((Math.random() * 370), (Math.random() * 150) + 30, 'alienShipGroup', game.rnd.integerInRange(0, 20));
+      enemy.body.setSize(25, 25, 3, -1);
       enemy.anchor.setTo = (0.5, 0.5);
       enemy.body.velocity.y = getRandomArbitrary(100, 200);
       enemy.body.velocity.x = getRandomArbitrary(-100, 100);

@@ -7,13 +7,13 @@
     game.load.image('player', 'app/assets/heroShip.png');
     game.load.image('playerBullet', 'app/assets/greenLaser.png');
     game.load.image('alienShipGroup', 'app/assets/alienShip.png');
-    game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
-    game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
-    game.load.image('goBoom', 'app/assets/explosion.png', 128, 128);
     game.load.image('menu', 'app/assets/startMenu.png');
     game.load.image('gameOverMenu', 'app/assets/gameOver.png');
-    game.load.spritesheet('enemyBullet', 'app/assets/enemyBullet.png');
+    game.load.image('enemyBullet', 'app/assets/enemyBullet.png');
     game.load.image('alienDeathParticle', 'app/assets/alienDeathParticle.png');
+
+    game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
+    game.load.audio('explodeBaddie', 'app/assets/sfx/explosion.mp3');
   }
 
   function create(){
