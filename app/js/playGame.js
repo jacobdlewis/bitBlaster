@@ -1,6 +1,6 @@
 
 (function(){
-  game.state.add('playgame', {create:create, update: update});
+  game.state.add('playgame', {create:create, update: update, render: render});
 
     var laser;
     var explodeBaddie;
@@ -18,6 +18,7 @@
     var scoreText;
     var nextBaddieTick = 0;
     var enemy;
+    var alienDeathEmitter;
 
 function create() {
 
@@ -26,6 +27,9 @@ function create() {
     explodeBaddie = game.add.audio('explodeBaddie');
     starfield = game.add.tileSprite(0, 0, 400, 600, 'starfield');
     player = game.add.sprite(200, 580, 'player');
+    alienDeathEmitter = game.add.emitter(0, 0, 100);
+    alienDeathEmitter.makeParticles('alienDeathParticle');
+    alienDeathEmitter.gravity = 200;
 
   //set world bounds, physics, cursors
     game.world.setBounds(0, 0, 400, 600);
@@ -39,6 +43,8 @@ function create() {
   //add physics to player's ship
     game.physics.arcade.enable(player);
     player.anchor.setTo(0.5, 0.5);
+    player.enableBody = true;
+    player.body.setSize(20, 20, 0, 5);
     player.body.collideWorldBounds = true;
 
   //baddie group & physics
@@ -105,6 +111,12 @@ function update() {
   }
 }
 
+function render() {
+  game.debug.body(enemyBullet);
+  game.debug.body(enemyBulletGroup);
+  game.debug.body(player);
+}
+
 //functions
 function addEnemy() {
       enemy = alienShipGroup.create((Math.random() * 370), (Math.random() * 150) + 30, 'alienShipGroup', game.rnd.integerInRange(0, 20));
@@ -156,6 +168,12 @@ function stopSpriteMomentum (sprite) {
    sprite.body.velocity.y = 0;
 }
 
+function blowUpAliens(alienHit) {
+  alienDeathEmitter.x = alienHit.x;
+  alienDeathEmitter.y = alienHit.y;
+  alienDeathEmitter.start(true, 2000, null, 10);
+}
+
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -169,6 +187,7 @@ function checkPlayerBulletHitAlien (playerBulletGroup, alienShipGroup) {
   playerBulletGroup.kill();
   alienShipGroup.kill();
   explodeBaddie.play('');
+  blowUpAliens(alienShipGroup);
   //  Add and update the score
   score += 50;
   scoreText.text = 'Score: ' + score;
