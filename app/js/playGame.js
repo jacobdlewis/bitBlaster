@@ -13,14 +13,14 @@
     var bullet;
     var score=0;
     var scoreText;
-    var enemy;
+    var UFO;
     var UFODeathEmitter;
     var nextUFOTick = 0;
     var maxUFOs = 5;
     var timeBeforeNextUFO = 1000;
-    var enemyBulletGroup;
-    var enemyBullet;
-    var enemyBulletTime = 0;
+    var UFOBulletGroup;
+    var UFOBullet;
+    var UFOBulletTime = 0;
 
 
 function create() {
@@ -33,6 +33,7 @@ function create() {
     UFODeathEmitter = game.add.emitter(0, 0, 100);
     UFODeathEmitter.makeParticles('UFODeathParticle');
     UFODeathEmitter.gravity = 200;
+
 
   //set world bounds, physics, cursors
     game.world.setBounds(0, 0, 600, 600);
@@ -58,13 +59,13 @@ function create() {
     UFOShipGroup.setAll('anchor.y', 0.5);
     UFOShipGroup.setAll('outOfBoundsKill', true);
 
-  //enemy bulelt group
-  enemyBulletGroup = this.add.group();
-  enemyBulletGroup.enableBody = true;
-  enemyBulletGroup.physicsBodyType = Phaser.Physics.ARCADE;
-  enemyBulletGroup.createMultiple(50, 'enemyBullet');
-  enemyBulletGroup.setAll('checkWorldBounds', true);
-  enemyBulletGroup.setAll('outOfBoundsKill', true);
+  //UFO bulelt group
+  UFOBulletGroup = this.add.group();
+  UFOBulletGroup.enableBody = true;
+  UFOBulletGroup.physicsBodyType = Phaser.Physics.ARCADE;
+  UFOBulletGroup.createMultiple(50, 'UFOBullet');
+  UFOBulletGroup.setAll('checkWorldBounds', true);
+  UFOBulletGroup.setAll('outOfBoundsKill', true);
 
 
   //bullet group & physics
@@ -79,7 +80,7 @@ function create() {
 function update() {
   //check for hits/collisions
   this.game.physics.arcade.collide(playerBulletGroup, UFOShipGroup, checkPlayerBulletHitUFO);
-  this.game.physics.arcade.collide(enemyBulletGroup, player, checkUFOBulletHitPlayer);
+  this.game.physics.arcade.collide(UFOBulletGroup, player, checkUFOBulletHitPlayer);
   this.game.physics.arcade.collide(player, UFOShipGroup, checkPlayerTouchingUFO);
   this.game.physics.arcade.collide(UFOShipGroup, UFOShipGroup);
   this.game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
@@ -106,22 +107,22 @@ function update() {
 
   if (UFOShipGroup.countLiving() < maxUFOs) {
     if (game.time.now > nextUFOTick) {
-      addEnemy();
-      fireEnemyBullet();
+      addUFO();
+      fireUFOBullet();
       nextUFOTick = game.time.now + timeBeforeNextUFO;
     }
   }
 }
 
 //functions
-function addEnemy() {
-      enemy = UFOShipGroup.create((Math.random() * 570), (Math.random() * 100) + 30, 'UFOShipGroup', game.rnd.integerInRange(0, 20));
-      enemy.body.setSize(25, 25, 3, -1);
-      enemy.anchor.setTo = (0.5, 0.5);
-      enemy.body.velocity.y = getRandomArbitrary(125, 300);
-      enemy.body.velocity.x = getRandomArbitrary(-100, 100);
-      enemy.checkWorldBounds = true;
-      enemy.outOfBoundsKill = true;
+function addUFO() {
+      UFO = UFOShipGroup.create((Math.random() * 570), (Math.random() * 100) + 30, 'UFOShipGroup', game.rnd.integerInRange(0, 20));
+      UFO.body.setSize(25, 25, 3, -1);
+      UFO.anchor.setTo = (0.5, 0.5);
+      UFO.body.velocity.y = getRandomArbitrary(125, 300);
+      UFO.body.velocity.x = getRandomArbitrary(-100, 100);
+      UFO.checkWorldBounds = true;
+      UFO.outOfBoundsKill = true;
 }
 
 function fireBullet() {
@@ -138,16 +139,18 @@ function fireBullet() {
     }
   }
 }
-function fireEnemyBullet() {
-  if (game.time.now > enemyBulletTime)
+function fireUFOBullet() {
+  if (game.time.now > UFOBulletTime)
   {
-    enemyBullet = enemyBulletGroup.getFirstExists(false);
-    if (enemyBullet)
+    UFOBullet = UFOBulletGroup.getFirstExists(false);
+    if (UFOBullet)
     {
-      enemyBullet.anchor.setTo(0.5, 0.5);
-      enemyBullet.reset(enemy.x , enemy.y + 32);
-      enemyBulletTime = game.time.now + 100;
-      game.physics.arcade.moveToObject(enemyBullet,player, 270);
+      UFOBullet.anchor.setTo(0.5, 0.5);
+      UFOBullet.animations.add('UFOBulletAnimation', [0, 1, 2, 3], 5, true);
+      UFOBullet.animations.play('UFOBulletAnimation');
+      UFOBullet.reset(UFO.x , UFO.y + 32);
+      UFOBulletTime = game.time.now + 100;
+      game.physics.arcade.moveToObject(UFOBullet,player, 270);
       laser.play('');
     }
   }
@@ -179,8 +182,8 @@ function blowUpUFOs(UFOHit) {
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
-function checkUFOBulletHitPlayer (enemyBulletGroup, player) {
-  enemyBulletGroup.kill();
+function checkUFOBulletHitPlayer (UFOBulletGroup, player) {
+  UFOBulletGroup.kill();
   player.kill();
   explodeUFO.play('');
   game.state.start('gameOver');
