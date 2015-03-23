@@ -112,16 +112,18 @@ function update() {
   starfield.tilePosition.y += 3;
 
   //check for input to move player
+  player.body.velocity.x = 0;
+  player.body.velocity.y = 0;
+
   if (cursors.left.isDown) {
     player.body.velocity.x = -200;
   } else if (cursors.right.isDown) {
     player.body.velocity.x = 200;
-  } else if (cursors.up.isDown){
+  }
+  if (cursors.up.isDown){
     player.body.velocity.y = -200;
   } else if (cursors.down.isDown) {
     player.body.velocity.y = 200;
-  } else {
-    stopSpriteMomentum(player);
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
@@ -151,22 +153,21 @@ function update() {
 function addBomber () {
   bomber = bomberShipGroup.create(570, 30, 'bomberShip');
   bomber.anchor.setTo = (0.5, 0.5);
-  bomber.body.velocity.x = -100;
+  bomber.body.velocity.x = -200;
   bomber.checkWorldBounds = true;
   bomber.outOfBoundsKill = true;
   bomberCreated = game.time.now;
-
 }
 
 function fireBomberBullet () {
   bomberBullet = bomberBulletGroup.getFirstExists(false);
     if (bomberBullet) {
       bomberBullet.anchor.setTo(0.5, 0.5);
-      bomberBullet.animations.add('bomberBulletAnimation', [0, 1], 10, true);
+      bomberBullet.animations.add('bomberBulletAnimation', [0, 1], 5, true);
       bomberBullet.animations.play('bomberBulletAnimation');
       bomberBullet.reset(bomber.x, bomber.y + 30);
       bomberBullet.body.velocity.y = 300;
-      nextBomberFireTick = game.time.now + 500;
+      nextBomberFireTick = game.time.now + 250;
     }
 }
 
@@ -187,7 +188,7 @@ function fireUFOBullet () {
     if (UFOBullet)
     {
       UFOBullet.anchor.setTo(0.5, 0.5);
-      UFOBullet.animations.add('UFOBulletAnimation', [0, 1, 2, 3], 5, true);
+      UFOBullet.animations.add('UFOBulletAnimation', [0, 1], 5, true);
       UFOBullet.animations.play('UFOBulletAnimation');
       UFOBullet.reset(UFO.x , UFO.y + 32);
       UFOBulletTime = game.time.now + 100;
