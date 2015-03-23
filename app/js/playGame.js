@@ -5,13 +5,14 @@
     var starfield;
     var laser;
     var playerBulletGroup;
-    var explodeUFO;
-    var player;
     var cursors;
+    var player;
+
     var bulletTime=0;
     var bullet;
     var score=0;
     var scoreText;
+
     var UFOShipGroup;
     var UFO;
     var UFODeathEmitter;
@@ -20,12 +21,14 @@
     var timeBeforeNextUFO = 1000;
     var UFOBulletGroup;
     var UFOBulletTime = 0;
+    var explodeUFO;
+
     var bomberShipGroup;
     var bomber;
-
+    var bomberCreated;
+    var nextBomberFireTick = 0;
 
 function create() {
-
   //add audio clips & sprites to game
     laser = game.add.audio('laser');
     explodeUFO = game.add.audio('explodeUFO');
@@ -52,7 +55,7 @@ function create() {
     player.body.collideWorldBounds = true;
 
   //player bullet group & physics
-    playerBulletGroup = this.add.group();
+    playerBulletGroup = game.add.group();
     playerBulletGroup.enableBody = true;
     playerBulletGroup.physicsBodyType = Phaser.Physics.ARCADE;
     playerBulletGroup.createMultiple(50, 'playerBullet');
@@ -96,9 +99,12 @@ function create() {
 
 function update() {
   //check for hits/collisions
-  this.game.physics.arcade.collide(playerBulletGroup, UFOShipGroup, checkPlayerBulletHitUFO);
-  this.game.physics.arcade.collide(UFOBulletGroup, player, checkUFOBulletHitPlayer);
-  this.game.physics.arcade.collide(player, UFOShipGroup, checkPlayerTouchingUFO);
+  this.game.physics.arcade.collide(playerBulletGroup, UFOShipGroup, playerBulletHitUFO);
+  this.game.physics.arcade.collide(UFOBulletGroup, player, UFOBulletHitPlayer);
+  this.game.physics.arcade.collide(player, UFOShipGroup, playerTouchingUFO);
+  this.game.physics.arcade.collide(player, bomberShipGroup, playerTouchingBomber);
+  this.game.physics.arcade.collide(player, bomberBulletGroup, bomberBulletHitPlayer);
+  this.game.physics.arcade.collide(playerBulletGroup, bomberShipGroup, playerBulletHitBomber);
   this.game.physics.arcade.collide(UFOShipGroup, UFOShipGroup);
   this.game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
 
@@ -126,6 +132,12 @@ function update() {
     addBomber();
   }
 
+  if (bomberShipGroup.countLiving() === 1) {
+    if (game.time.now > nextBomberFireTick) {
+      fireBomberBullet();
+    }
+  }
+
   if (UFOShipGroup.countLiving() < maxUFOs) {
     if (game.time.now > nextUFOTick) {
       addUFO();
@@ -142,6 +154,8 @@ function addBomber () {
   bomber.body.velocity.x = -100;
   bomber.checkWorldBounds = true;
   bomber.outOfBoundsKill = true;
+  bomberCreated = game.time.now;
+
 }
 
 function fireBomberBullet () {
@@ -150,8 +164,9 @@ function fireBomberBullet () {
       bomberBullet.anchor.setTo(0.5, 0.5);
       bomberBullet.animations.add('bomberBulletAnimation', [0, 1], 10, true);
       bomberBullet.animations.play('bomberBulletAnimation');
-      bomberBullet.reset(bomberShpiGroup.x, bomber.y + 30);
+      bomberBullet.reset(bomber.x, bomber.y + 30);
       bomberBullet.body.velocity.y = 300;
+      nextBomberFireTick = game.time.now + 500;
     }
 }
 
@@ -212,14 +227,14 @@ function getRandomArbitrary (min, max) {
   return Math.random() * (max - min) + min;
 }
 
-function checkUFOBulletHitPlayer (UFOBulletGroup, player) {
+function UFOBulletHitPlayer (UFOBulletGroup, player) {
   UFOBulletGroup.kill();
   player.kill();
   explodeUFO.play('');
   gameOver();
 }
 
-function checkPlayerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
+function playerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
   playerBulletGroup.kill();
   UFOShipGroup.kill();
   explodeUFO.play('');
@@ -233,9 +248,32 @@ function checkPlayerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
   }
 }
 
-function checkPlayerTouchingUFO (player, UFOShipGroup) {
+function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
+  playerBulletGroup.kill();
+  bomberShipGroup.kill();
+  explodeUFO.play('');
+  blowUpUFOs(bomberShipGroup);
+  score += 1000;
+  scoreText.text = 'Score: ' + score;
+}
+
+function playerTouchingUFO (player, UFOShipGroup) {
   player.kill();
   UFOShipGroup.kill();
+  explodeUFO.play('');
+  gameOver();
+}
+
+function bomberBulletHitPlayer (bomberBulletGroup, player) {
+  bomberBulletGroup.kill();
+  player.kill();
+  explodeUFO.play('');
+  gameOver();
+}
+
+function playerTouchingBomber (player, bomberShipGroup) {
+  bomberBulletGroup.kill();
+  player.kill();
   explodeUFO.play('');
   gameOver();
 }

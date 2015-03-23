@@ -10,7 +10,7 @@
     game.load.image('menu', 'app/assets/startMenu.png');
     game.load.image('gameOverMenu', 'app/assets/gameOver.png');
     game.load.image('bomberShip', 'app/assets/bomberShip.png')
-    game.load.spritesheet('bomberBullet', 'app/assets/bomberBullet.png');
+    game.load.spritesheet('bomberBullet', 'app/assets/bomberBullet.png', 2, 10, 2);
     game.load.image('UFODeathParticle', 'app/assets/UFODeathParticle.png');
     game.load.spritesheet('UFOBullet', 'app/assets/UFOBulletAnimation.png', 8, 8, 4);
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
