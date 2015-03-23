@@ -12,6 +12,7 @@
     var bullet;
     var score=0;
     var scoreText;
+    var finalScore;
 
     var UFOShipGroup;
     var UFO;
@@ -130,7 +131,7 @@ function update() {
     fireBullet();
   }
 
-  if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 500 === 0) {
+  if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1200 === 0) {
     addBomber();
   }
 
@@ -254,7 +255,7 @@ function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
   bomberShipGroup.kill();
   explodeUFO.play('');
   blowUpUFOs(bomberShipGroup);
-  score += 1000;
+  score += 900;
   scoreText.text = 'Score: ' + score;
 }
 
@@ -285,10 +286,11 @@ function stopSpriteMomentum (sprite) {
 }
 
 function gameOver () {
-  score = 0;
+  finalScore = score;
   maxUFOs = 5;
   timeBeforeNextUFO = 1000;
-  game.state.start('gameOver');
+  score = 0;
+  game.state.start('gameOver', true, false, finalScore);
 }
 
 })();
