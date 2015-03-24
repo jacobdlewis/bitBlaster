@@ -16,6 +16,8 @@
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
     game.load.audio('explodeUFO', 'app/assets/sfx/explosion.mp3');
     game.load.audio('mainTheme', 'app/assets/sfx/mainThemeCropped.mp3');
+    game.load.audio('UFOshot', 'app/assets/sfx/lazer.wav');
+    game.load.audio('bomberFlight', 'app/assets/sfx/numkey.wav');
   }
 
   function create(){

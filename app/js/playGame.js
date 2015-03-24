@@ -10,7 +10,7 @@
 
     var bulletTime=0;
     var bullet;
-    var score=0;
+    var score=800;
     var scoreText;
     var finalScore;
 
@@ -23,8 +23,10 @@
     var UFOBulletGroup;
     var UFOBulletTime = 0;
     var explodeUFO;
+    var UFOshotSound;
 
     var bomberShipGroup;
+    var bomberSound;
     var bomber;
     var bomberCreated;
     var nextBomberFireTick = 0;
@@ -40,8 +42,10 @@ function create() {
     UFODeathEmitter = game.add.emitter(0, 0, 100);
     UFODeathEmitter.makeParticles('UFODeathParticle');
     UFODeathEmitter.gravity = 200;
+    UFOshotSound = game.add.audio('UFOshot')
     mainTheme = game.add.audio('mainTheme');
-    mainTheme.play('', 0, .7, true);
+    mainTheme.play('', 0, .8, true);
+    bomberSound = game.add.audio('bomberFlight');
 
   //set world bounds, physics, cursors
     game.world.setBounds(0, 0, 600, 600);
@@ -180,6 +184,7 @@ function fireBomberBullet () {
       bomberBullet.reset(bomber.x, bomber.y + 30);
       bomberBullet.body.velocity.y = 300;
       nextBomberFireTick = game.time.now + 250;
+      bomberSound.play('', 0, .8);
     }
 }
 
@@ -205,7 +210,7 @@ function fireUFOBullet () {
       UFOBullet.reset(UFO.x , UFO.y + 32);
       UFOBulletTime = game.time.now + 100;
       game.physics.arcade.moveToObject(UFOBullet,player, 270);
-      laser.play('');
+      UFOshotSound.play('', 0, .7);
     }
   }
 }
@@ -223,8 +228,8 @@ function playerFireBullet () {
     {
       bullet.anchor.setTo(0.5, 0.5);
       bullet.reset(player.x , player.y - 23);
-      bullet.body.velocity.y = -300;
-      bulletTime = game.time.now + 225;
+      bullet.body.velocity.y = -350;
+      bulletTime = game.time.now + 275;
       laser.play('');
     }
   }
