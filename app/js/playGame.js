@@ -13,7 +13,7 @@
 
     var bulletTime=0;
     var bullet;
-    var score=800;
+    var score=0;
     var scoreText;
     var finalScore;
 
