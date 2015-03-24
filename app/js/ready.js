@@ -10,7 +10,7 @@
 
     gameStartTime = new Date().getTime();
     readyTime = gameStartTime + 3000;
-    countInTimer = game.add.text(295, 310, '3', { fontSize: '32px', fill: 'white' });
+    countInTimer = game.add.text(295, 310, '', { fontSize: '32px', fill: 'white' });
     countInSound = game.add.audio('bomberFlight');
 
 

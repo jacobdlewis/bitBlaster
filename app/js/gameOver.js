@@ -18,6 +18,6 @@
   }
 
   function restartGame() {
-    this.game.state.start('playgame');
+    this.game.state.start('ready');
   }
 })();
