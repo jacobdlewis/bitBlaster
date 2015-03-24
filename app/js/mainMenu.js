@@ -31,6 +31,6 @@
   }
 
   function startLvl1() {
-    this.game.state.start('playgame');
+    this.game.state.start('ready');
   }
 })();
