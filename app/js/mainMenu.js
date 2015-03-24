@@ -6,6 +6,7 @@
     game.load.image('starfield', 'app/assets/starfield_background_faded.png');
     game.load.image('player', 'app/assets/heroShip.png');
     game.load.image('playerBullet', 'app/assets/playerBullet.png');
+    game.load.image('playerDeathParticle', 'app/assets/playerDeathParticle.png');
     game.load.image('UFOShipGroup', 'app/assets/UFOShip.png');
     game.load.image('menu', 'app/assets/startingMenu.png');
     game.load.image('gameOverMenu', 'app/assets/gameOver.png');

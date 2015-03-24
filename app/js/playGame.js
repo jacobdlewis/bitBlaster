@@ -5,17 +5,17 @@
     var starfield;
     var laser;
     var cursors;
-    var gameOverDelay = Infinity;
+    var gameOverDelay;
+    var score=0;
+    var scoreText;
+    var finalScore;
 
     var playerBulletGroup;
     var player;
     var playerDeathSound;
-
+    var playerDeathEmitter;
     var bulletTime=0;
     var bullet;
-    var score=0;
-    var scoreText;
-    var finalScore;
 
     var UFOShipGroup;
     var UFO;
@@ -38,10 +38,14 @@
 
 function create() {
   //add audio clips & sprites to game
+    gameOverDelay = Infinity;
     laser = game.add.audio('laser');
     explodeUFO = game.add.audio('explodeUFO');
     starfield = game.add.tileSprite(0, 0, 600, 600, 'starfield');
     player = game.add.sprite(200, 580, 'player');
+    playerDeathEmitter = game.add.emitter(0, 0, 100);
+    playerDeathEmitter.makeParticles('playerDeathParticle');
+    playerDeathEmitter.gravity = 0;
     UFODeathEmitter = game.add.emitter(0, 0, 100);
     UFODeathEmitter.makeParticles('UFODeathParticle');
     UFODeathEmitter.gravity = 200;
@@ -125,8 +129,9 @@ function update() {
   starfield.tilePosition.y += 3;
 
   //check for input to move player
-  player.body.velocity.x = 0;
-  player.body.velocity.y = 0;
+  stopSpriteMomentum(player);
+  //player.body.velocity.x = 0;
+  //player.body.velocity.y = 0;
 
   if (cursors.left.isDown) {
     player.body.velocity.x = -200;
@@ -236,16 +241,16 @@ function playerFireBullet () {
       bullet.anchor.setTo(0.5, 0.5);
       bullet.reset(player.x , player.y - 23);
       bullet.body.velocity.y = -350;
-      bulletTime = game.time.now + 275;
+      bulletTime = game.time.now + 350;
       laser.play('');
     }
   }
 }
 
-function blowUpUFOs (UFOHit) {
-  UFODeathEmitter.x = UFOHit.x;
-  UFODeathEmitter.y = UFOHit.y;
-  UFODeathEmitter.start(true, 2000, null, 30);
+function blowUpShip (emitter, shipHit, numEmittedParticles) {
+  emitter.x = shipHit.x;
+  emitter.y = shipHit.y;
+  emitter.start(true, 2000, null, numEmittedParticles);
 }
 
 function getRandomArbitrary (min, max) {
@@ -263,7 +268,7 @@ function playerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
   playerBulletGroup.kill();
   UFOShipGroup.kill();
   explodeUFO.play('');
-  blowUpUFOs(UFOShipGroup);
+  blowUpShip(UFODeathEmitter, UFOShipGroup, 25);
   //  Add and update the score
   score += 100;
   scoreText.text = 'Score: ' + score;
@@ -277,7 +282,7 @@ function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
   playerBulletGroup.kill();
   bomberShipGroup.kill();
   explodeUFO.play('');
-  blowUpUFOs(bomberShipGroup);
+  blowUpShip(UFODeathEmitter, bomberShipGroup, 50);
   score += 900;
   scoreText.text = 'Score: ' + score;
 }
@@ -310,6 +315,7 @@ function stopSpriteMomentum (sprite) {
 
 function gameOver () {
   mainTheme.stop();
+  blowUpShip(playerDeathEmitter, player, 150)
   playerDeathSound.play('');
   gameOverDelay = game.time.now + 5000;
   game.add.text(230, 280, 'GAME OVER', { fontSize: '32px', fill: 'white' });
