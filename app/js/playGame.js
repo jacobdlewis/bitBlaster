@@ -28,6 +28,8 @@
     var bomber;
     var bomberCreated;
     var nextBomberFireTick = 0;
+    var mainTheme;
+    var bomberDirection = true;
 
 function create() {
   //add audio clips & sprites to game
@@ -38,6 +40,8 @@ function create() {
     UFODeathEmitter = game.add.emitter(0, 0, 100);
     UFODeathEmitter.makeParticles('UFODeathParticle');
     UFODeathEmitter.gravity = 200;
+    mainTheme = game.add.audio('mainTheme');
+    mainTheme.play('', 0, .7, true);
 
   //set world bounds, physics, cursors
     game.world.setBounds(0, 0, 600, 600);
@@ -128,7 +132,7 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-    fireBullet();
+    playerFireBullet();
   }
 
   if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1200 === 0) {
@@ -152,9 +156,16 @@ function update() {
 
 //functions
 function addBomber () {
-  bomber = bomberShipGroup.create(570, 30, 'bomberShip');
+  if (bomberDirection){
+    bomber = bomberShipGroup.create(570, 30, 'bomberShip');
+    bomber.body.velocity.x = -200;
+    bomberDirection = false;
+  } else {
+    bomber = bomberShipGroup.create(-30, 30, 'bomberShip');
+    bomber.body.velocity.x = 200;
+    bomberDirection = true;
+  }
   bomber.anchor.setTo = (0.5, 0.5);
-  bomber.body.velocity.x = -200;
   bomber.checkWorldBounds = true;
   bomber.outOfBoundsKill = true;
   bomberCreated = game.time.now;
@@ -204,7 +215,7 @@ function increaseUFOSpawnRateAndNumber () {
   timeBeforeNextUFO -=100;
 }
 
-function fireBullet () {
+function playerFireBullet () {
   if (game.time.now > bulletTime)
   {
     bullet = playerBulletGroup.getFirstExists(false);
@@ -286,10 +297,10 @@ function stopSpriteMomentum (sprite) {
 }
 
 function gameOver () {
+  mainTheme.stop();
   finalScore = score;
   maxUFOs = 5;
   timeBeforeNextUFO = 1000;
-  score = 0;
   game.state.start('gameOver', true, false, finalScore);
 }
 

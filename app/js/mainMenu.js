@@ -7,7 +7,7 @@
     game.load.image('player', 'app/assets/heroShip.png');
     game.load.image('playerBullet', 'app/assets/playerBullet.png');
     game.load.image('UFOShipGroup', 'app/assets/UFOShip.png');
-    game.load.image('menu', 'app/assets/startMenu.png');
+    game.load.image('menu', 'app/assets/startingMenu.png');
     game.load.image('gameOverMenu', 'app/assets/gameOver.png');
     game.load.image('bomberShip', 'app/assets/bomberShip.png')
     game.load.spritesheet('bomberBullet', 'app/assets/bomberBullet.png', 12, 12, 2);
@@ -15,10 +15,11 @@
     game.load.spritesheet('UFOBullet', 'app/assets/UFOBulletAnimation.png', 10, 9, 2);
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
     game.load.audio('explodeUFO', 'app/assets/sfx/explosion.mp3');
+    game.load.audio('mainTheme', 'app/assets/sfx/mainThemeCropped.mp3');
   }
 
   function create(){
-    game.add.sprite(100, 0, 'menu');
+    game.add.sprite(0, 0, 'menu');
 
     var spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.add(startLvl1);
