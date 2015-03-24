@@ -11,6 +11,9 @@
     var finalScore;
     var laserUpgradeGroup;
     var playerLaserCount;
+    var powerUp;
+    var nextLaserUpgradeTick;
+    var scoreBeforeNextLaserUpgrade;
 
     var playerBulletGroup;
     var player;
@@ -49,6 +52,8 @@ function create() {
     nextBomberFireTick = 0;
     bomberDirection = true;
     playerLaserCount = 0;
+    nextLaserUpgradeTick = 0;
+    scoreBeforeNextLaserUpgrade = 1000;
 
   //add audio clips & sprites to game
     gameOverDelay = Infinity;
@@ -133,14 +138,15 @@ function create() {
 
 function update() {
   //check for hits/collisions
-  this.game.physics.arcade.collide(playerBulletGroup, UFOShipGroup, playerBulletHitUFO);
-  this.game.physics.arcade.collide(UFOBulletGroup, player, UFOBulletHitPlayer);
-  this.game.physics.arcade.collide(player, UFOShipGroup, playerTouchingUFO);
-  this.game.physics.arcade.collide(player, bomberShipGroup, playerTouchingBomber);
-  this.game.physics.arcade.collide(player, bomberBulletGroup, bomberBulletHitPlayer);
-  this.game.physics.arcade.collide(playerBulletGroup, bomberShipGroup, playerBulletHitBomber);
-  this.game.physics.arcade.collide(UFOShipGroup, UFOShipGroup);
-  this.game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
+  game.physics.arcade.collide(playerBulletGroup, UFOShipGroup, playerBulletHitUFO);
+  game.physics.arcade.collide(UFOBulletGroup, player, UFOBulletHitPlayer);
+  game.physics.arcade.collide(player, UFOShipGroup, playerTouchingUFO);
+  game.physics.arcade.collide(player, bomberShipGroup, playerTouchingBomber);
+  game.physics.arcade.collide(player, bomberBulletGroup, bomberBulletHitPlayer);
+  game.physics.arcade.collide(player, powerUp, upgradeLaser);
+  game.physics.arcade.collide(playerBulletGroup, bomberShipGroup, playerBulletHitBomber);
+  game.physics.arcade.collide(UFOShipGroup, UFOShipGroup);
+  game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
 
   //scroll starfield background vertically
   starfield.tilePosition.y += 3;
@@ -165,8 +171,12 @@ function update() {
     playerFireBullet();
   }
 
-  if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1200 === 0) {
+  if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1000 === 0) {
     addBomber();
+  }
+
+  if (score !== 0 && score % scoreBeforeNextLaserUpgrade === 0 && game.time.now > nextLaserUpgradeTick) {
+    dropLaserPowerUp();
   }
 
   if (bomberShipGroup.countLiving() === 1) {
@@ -243,17 +253,6 @@ function fireUFOBullet () {
   }
 }
 
-function dropLaserPowerUp () {
-  powerUp = laserUpgradeGroup.getFirstExists(false);
-  if (powerUp) {
-    powerUp.anchor.setTo(0.5, 0.5);
-    powerUp.animations.add('laserUp', [0, 1], 5, true);
-    powerUp.animations.play('laserUp');
-    powerUp.reset(284, -30);
-    powerUp.body.velocity.y = 250;
-  }
-}
-
 function increaseUFOSpawnRateAndNumber () {
   maxUFOs +=1;
   timeBeforeNextUFO -=100;
@@ -266,12 +265,64 @@ function playerFireBullet () {
     if (bullet)
     {
       bullet.anchor.setTo(0.5, 0.5);
-      bullet.reset(player.x , player.y - 23);
+      bullet.reset(player.x , player.y - 20);
       bullet.body.velocity.y = -350;
       bulletTime = game.time.now + 350;
       laser.play('');
     }
+    if (playerLaserCount > 0) {
+    bullet2 = playerBulletGroup.getFirstExists(false);
+      if (bullet2)
+      {
+        bullet2.anchor.setTo(0.5, 0.5);
+        bullet2.reset(player.x + 10, player.y - 20);
+        bullet2.body.velocity.y = -350;
+      }
+      bullet3 = playerBulletGroup.getFirstExists(false);
+      if (bullet3)
+      {
+        bullet3.anchor.setTo(0.5, 0.5);
+        bullet3.reset(player.x - 10, player.y - 20);
+        bullet3.body.velocity.y = -350;
+      }
+    }
+    if (playerLaserCount > 1) {
+    bullet4 = playerBulletGroup.getFirstExists(false);
+      if (bullet4)
+      {
+        bullet4.anchor.setTo(0.5, 0.5);
+        bullet4.reset(player.x + 20, player.y - 20);
+        bullet4.body.velocity.y = -350;
+      }
+      bullet5 = playerBulletGroup.getFirstExists(false);
+      if (bullet5)
+      {
+        bullet5.anchor.setTo(0.5, 0.5);
+        bullet5.reset(player.x - 20, player.y - 20);
+        bullet5.body.velocity.y = -350;
+      }
+    }
   }
+}
+
+function dropLaserPowerUp () {
+  powerUp = laserUpgradeGroup.getFirstExists(false);
+  if (powerUp) {
+    powerUp.enableBody = true;
+    powerUp.anchor.setTo(0.5, 0.5);
+    powerUp.body.setSize(20, 20);
+    powerUp.animations.add('laserUp', [0, 1], 5, true);
+    powerUp.animations.play('laserUp');
+    powerUp.reset(284, -30);
+    powerUp.body.velocity.y = 250;
+    nextLaserUpgradeTick = game.time.now + 3000;
+  }
+}
+
+function upgradeLaser() {
+  powerUp.kill();
+  playerLaserCount++;
+  scoreBeforeNextLaserUpgrade += 2500;
 }
 
 function blowUpShip (emitter, shipHit, numEmittedParticles) {
