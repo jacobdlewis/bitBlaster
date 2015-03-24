@@ -397,6 +397,9 @@ function gameOver () {
   blowUpShip(playerDeathEmitter, player, 150)
   playerDeathSound.play('');
   gameOverDelay = game.time.now + 5000;
+  var fb = new Firebase('https://bitblaster.firebaseio.com/');
+  var fbRef = fb.push();
+  fbRef.set({ score: score, id: fbRef.key()});
   game.add.text(230, 280, 'GAME OVER', { fontSize: '32px', fill: 'white' });
   finalScore = score;
 }
