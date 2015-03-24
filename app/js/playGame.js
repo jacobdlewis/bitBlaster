@@ -6,7 +6,7 @@
     var laser;
     var cursors;
     var gameOverDelay;
-    var score=0;
+    var score;
     var scoreText;
     var finalScore;
 
@@ -14,17 +14,17 @@
     var player;
     var playerDeathSound;
     var playerDeathEmitter;
-    var bulletTime=0;
+    var bulletTime;
     var bullet;
 
     var UFOShipGroup;
     var UFO;
     var UFODeathEmitter;
-    var nextUFOTick = 0;
-    var maxUFOs = 5;
-    var timeBeforeNextUFO = 1000;
+    var nextUFOTick;
+    var maxUFOs;
+    var timeBeforeNextUFO;
     var UFOBulletGroup;
-    var UFOBulletTime = 0;
+    var UFOBulletTime;
     var explodeUFO;
     var UFOshotSound;
 
@@ -32,11 +32,20 @@
     var bomberSound;
     var bomber;
     var bomberCreated;
-    var nextBomberFireTick = 0;
+    var nextBomberFireTick;
     var mainTheme;
-    var bomberDirection = true;
+    var bomberDirection;
 
 function create() {
+  //initialize variables
+  score = 0;
+  bulletTime = 0;
+  nextUFOTick = 0;
+  maxUFOs = 5;
+  timeBeforeNextUFO = 1000;
+  UFOBulletTime = 0;
+  nextBomberFireTick = 0;
+  bomberDirection = true;
   //add audio clips & sprites to game
     gameOverDelay = Infinity;
     laser = game.add.audio('laser');
@@ -315,6 +324,7 @@ function stopSpriteMomentum (sprite) {
 
 function gameOver () {
   mainTheme.stop();
+  bulletTime = bulletTime + 8000000;
   blowUpShip(playerDeathEmitter, player, 150)
   playerDeathSound.play('');
   gameOverDelay = game.time.now + 5000;
