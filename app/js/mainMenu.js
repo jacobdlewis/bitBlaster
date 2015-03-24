@@ -18,6 +18,7 @@
     game.load.audio('mainTheme', 'app/assets/sfx/mainThemeCropped.mp3');
     game.load.audio('UFOshot', 'app/assets/sfx/lazer.wav');
     game.load.audio('bomberFlight', 'app/assets/sfx/numkey.wav');
+    game.load.audio('playerDeath', 'app/assets/sfx/player_death.wav');
   }
 
   function create(){

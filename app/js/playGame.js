@@ -4,9 +4,12 @@
 
     var starfield;
     var laser;
-    var playerBulletGroup;
     var cursors;
+    var gameOverDelay = Infinity;
+
+    var playerBulletGroup;
     var player;
+    var playerDeathSound;
 
     var bulletTime=0;
     var bullet;
@@ -46,6 +49,7 @@ function create() {
     mainTheme = game.add.audio('mainTheme');
     mainTheme.play('', 0, .8, true);
     bomberSound = game.add.audio('bomberFlight');
+    playerDeathSound = game.add.audio('playerDeath');
 
   //set world bounds, physics, cursors
     game.world.setBounds(0, 0, 600, 600);
@@ -155,6 +159,9 @@ function update() {
       fireUFOBullet();
       nextUFOTick = game.time.now + timeBeforeNextUFO;
     }
+  }
+  if (game.time.now > gameOverDelay) {
+    game.state.start('gameOver', true, false, finalScore);
   }
 }
 
@@ -303,10 +310,10 @@ function stopSpriteMomentum (sprite) {
 
 function gameOver () {
   mainTheme.stop();
+  playerDeathSound.play('');
+  gameOverDelay = game.time.now + 5000;
+  game.add.text(230, 280, 'GAME OVER', { fontSize: '32px', fill: 'white' });
   finalScore = score;
-  maxUFOs = 5;
-  timeBeforeNextUFO = 1000;
-  game.state.start('gameOver', true, false, finalScore);
 }
 
 })();
