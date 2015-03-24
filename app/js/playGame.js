@@ -9,6 +9,8 @@
     var score;
     var scoreText;
     var finalScore;
+    var storedScores;
+
     var laserUpgradeGroup;
     var playerLaserCount;
     var powerUp;
@@ -42,18 +44,8 @@
     var bomberDirection;
 
 function create() {
-  //initialize variables
-    score = 0;
-    bulletTime = 0;
-    nextUFOTick = 0;
-    maxUFOs = 5;
-    timeBeforeNextUFO = 1000;
-    UFOBulletTime = 0;
-    nextBomberFireTick = 0;
-    bomberDirection = true;
-    playerLaserCount = 0;
-    nextLaserUpgradeTick = 0;
-    scoreBeforeNextLaserUpgrade = 1000;
+    getStoredScores();
+    initializeNumericalVariables();
 
   //add audio clips & sprites to game
     gameOverDelay = Infinity;
@@ -389,6 +381,28 @@ function playerTouchingBomber (player, bomberShipGroup) {
 function stopSpriteMomentum (sprite) {
    sprite.body.velocity.x = 0;
    sprite.body.velocity.y = 0;
+}
+
+function getStoredScores () {
+  var fb = new Firebase('https://bitblaster.firebaseio.com/');
+  fb.once('value', function(snapshot) {
+    storedScores = snapshot.val();
+    console.log(storedScores);
+  })
+}
+
+function initializeNumericalVariables() {
+  score = 0;
+    bulletTime = 0;
+    nextUFOTick = 0;
+    maxUFOs = 5;
+    timeBeforeNextUFO = 1000;
+    UFOBulletTime = 0;
+    nextBomberFireTick = 0;
+    bomberDirection = true;
+    playerLaserCount = 0;
+    nextLaserUpgradeTick = 0;
+    scoreBeforeNextLaserUpgrade = 1000;
 }
 
 function gameOver () {
