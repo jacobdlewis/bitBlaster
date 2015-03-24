@@ -9,6 +9,8 @@
     var score;
     var scoreText;
     var finalScore;
+    var laserUpgradeGroup;
+    var playerLaserCount;
 
     var playerBulletGroup;
     var player;
@@ -38,14 +40,16 @@
 
 function create() {
   //initialize variables
-  score = 0;
-  bulletTime = 0;
-  nextUFOTick = 0;
-  maxUFOs = 5;
-  timeBeforeNextUFO = 1000;
-  UFOBulletTime = 0;
-  nextBomberFireTick = 0;
-  bomberDirection = true;
+    score = 0;
+    bulletTime = 0;
+    nextUFOTick = 0;
+    maxUFOs = 5;
+    timeBeforeNextUFO = 1000;
+    UFOBulletTime = 0;
+    nextBomberFireTick = 0;
+    bomberDirection = true;
+    playerLaserCount = 0;
+
   //add audio clips & sprites to game
     gameOverDelay = Infinity;
     laser = game.add.audio('laser');
@@ -92,8 +96,6 @@ function create() {
     UFOShipGroup = game.add.group();
     UFOShipGroup.enableBody = true;
     UFOShipGroup.physicsBodyType = Phaser.Physics.ARCADE;
-    UFOShipGroup.setAll('anchor.x', 0.5);
-    UFOShipGroup.setAll('anchor.y', 0.5);
     UFOShipGroup.setAll('checkWorldBounds', true);
     UFOShipGroup.setAll('outOfBoundsKill', true);
 
@@ -109,8 +111,6 @@ function create() {
     bomberShipGroup = game.add.group();
     bomberShipGroup.enableBody = true;
     bomberShipGroup.physicsBodyType = Phaser.Physics.ARCADE;
-    bomberShipGroup.setAll('anchor.x', 0.5);
-    bomberShipGroup.setAll('anchor.y', 0.5);
     bomberShipGroup.setAll('checkWorldBounds', true);
     bomberShipGroup.setAll('outOfBoundsKill', true);
 
@@ -121,6 +121,14 @@ function create() {
     bomberBulletGroup.createMultiple(50, 'bomberBullet');
     bomberBulletGroup.setAll('checkWorldBounds', true);
     bomberBulletGroup.setAll('outOfBoundsKill', true);
+
+  //laserUpgradeGroup
+    laserUpgradeGroup = game.add.group();
+    laserUpgradeGroup.enableBody = true;
+    laserUpgradeGroup.physicsBodyType = Phaser.Physics.ARCADE;
+    laserUpgradeGroup.createMultiple(3, 'laserUp');
+    laserUpgradeGroup.setAll('checkWorldBounds', true);
+    laserUpgradeGroup.setAll('outOfBoundsKill', true);
 }
 
 function update() {
@@ -223,8 +231,7 @@ function fireUFOBullet () {
   if (game.time.now > UFOBulletTime)
   {
     UFOBullet = UFOBulletGroup.getFirstExists(false);
-    if (UFOBullet)
-    {
+    if (UFOBullet) {
       UFOBullet.anchor.setTo(0.5, 0.5);
       UFOBullet.animations.add('UFOBulletAnimation', [0, 1], 5, true);
       UFOBullet.animations.play('UFOBulletAnimation');
@@ -233,6 +240,17 @@ function fireUFOBullet () {
       game.physics.arcade.moveToObject(UFOBullet,player, 270);
       UFOshotSound.play('', 0, .7);
     }
+  }
+}
+
+function dropLaserPowerUp () {
+  powerUp = laserUpgradeGroup.getFirstExists(false);
+  if (powerUp) {
+    powerUp.anchor.setTo(0.5, 0.5);
+    powerUp.animations.add('laserUp', [0, 1], 5, true);
+    powerUp.animations.play('laserUp');
+    powerUp.reset(284, -30);
+    powerUp.body.velocity.y = 250;
   }
 }
 

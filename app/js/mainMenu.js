@@ -14,6 +14,7 @@
     game.load.spritesheet('bomberBullet', 'app/assets/bomberBullet.png', 12, 12, 2);
     game.load.image('UFODeathParticle', 'app/assets/UFODeathParticle.png');
     game.load.spritesheet('UFOBullet', 'app/assets/UFOBulletAnimation.png', 10, 9, 2);
+    game.load.spritesheet('laserUp', 'app/assets/laserPowerUp.png', 16, 16, 2);
     game.load.audio('laser', 'app/assets/sfx/blaster.mp3');
     game.load.audio('explodeUFO', 'app/assets/sfx/explosion.mp3');
     game.load.audio('mainTheme', 'app/assets/sfx/mainThemeCropped.mp3');
