@@ -9,7 +9,8 @@
     var score;
     var scoreText;
     var finalScore;
-    var storedScores;
+    var topTenScores;
+    var playerInitials;
 
     var laserUpgradeGroup;
     var playerLaserCount;
@@ -44,7 +45,7 @@
     var bomberDirection;
 
 function create() {
-    getStoredScores();
+    getScoresFromFirebase();
     initializeNumericalVariables();
 
   //add audio clips & sprites to game
@@ -185,6 +186,10 @@ function update() {
     }
   }
   if (game.time.now > gameOverDelay) {
+    if (checkForNewHighScore()) {
+      var playerResponse = prompt("You got a high score! What are your initials?").toUpperCase();
+      storePlayerScore(playerResponse);
+    }
     game.state.start('gameOver', true, false, finalScore);
   }
 }
@@ -220,7 +225,7 @@ function fireBomberBullet () {
 }
 
 function addUFO () {
-  UFO = UFOShipGroup.create((Math.random() * 570), (Math.random() * 100) + 30, 'UFOShipGroup', game.rnd.integerInRange(0, 20));
+  UFO = UFOShipGroup.create((Math.random() * 570), (Math.random() * 70) + 30, 'UFOShipGroup', game.rnd.integerInRange(0, 20));
   UFO.body.setSize(25, 25, 3, -1);
   UFO.anchor.setTo = (0.5, 0.5);
   UFO.body.velocity.y = getRandomArbitrary(125, 300);
@@ -383,14 +388,6 @@ function stopSpriteMomentum (sprite) {
    sprite.body.velocity.y = 0;
 }
 
-function getStoredScores () {
-  var fb = new Firebase('https://bitblaster.firebaseio.com/');
-  fb.once('value', function(snapshot) {
-    storedScores = snapshot.val();
-    console.log(storedScores);
-  })
-}
-
 function initializeNumericalVariables() {
   score = 0;
     bulletTime = 0;
@@ -405,17 +402,41 @@ function initializeNumericalVariables() {
     scoreBeforeNextLaserUpgrade = 1000;
 }
 
+function checkForNewHighScore () {
+  if (finalScore > topTenScores[9].score) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function getScoresFromFirebase () {
+  var fb = new Firebase('https://bitblaster.firebaseio.com/');
+  fb.once('value', function(snapshot) {
+    var storedScores = snapshot.val();
+    var sortedScores =  _.sortBy(storedScores, 'score');
+    topTenScores = sortedScores.slice(sortedScores.length -10, sortedScores.length).reverse();
+    // _.forEach(topTenScores, function(scoreObj) {
+    // console.log(scoreObj.score);
+    // });
+  });
+}
+
+function storePlayerScore(initials) {
+  var fb = new Firebase('https://bitblaster.firebaseio.com/');
+  var fbRef = fb.push();
+  fbRef.set({ score: score, id: fbRef.key(), initials: initials });
+}
+
 function gameOver () {
   mainTheme.stop();
   bulletTime = bulletTime + 8000000;
   blowUpShip(playerDeathEmitter, player, 150)
   playerDeathSound.play('');
   gameOverDelay = game.time.now + 5000;
-  var fb = new Firebase('https://bitblaster.firebaseio.com/');
-  var fbRef = fb.push();
-  fbRef.set({ score: score, id: fbRef.key()});
   game.add.text(230, 280, 'GAME OVER', { fontSize: '32px', fill: 'white' });
   finalScore = score;
+  checkForNewHighScore();
 }
 
 })();
