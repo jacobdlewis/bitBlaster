@@ -187,7 +187,16 @@ function update() {
   }
   if (game.time.now > gameOverDelay) {
     if (checkForNewHighScore()) {
-      var playerResponse = prompt("You got a high score! What are your initials?").toUpperCase();
+      var playerResponse;
+      playerResponse = prompt("You got a high score! What are your initials?").toUpperCase();
+      while (playerResponse !== undefined) {
+        if (playerResponse.length > 3 || playerResponse.length < 3) {
+          playerResponse = prompt("There was a problem with your entry. Please enter 3 character initials. Ex. AAA").toUpperCase();
+        }
+        if (playerResponse.length === 3) {
+          break;
+        }
+      }
       storePlayerScore(playerResponse);
     }
     game.state.start('gameOver', true, false);
