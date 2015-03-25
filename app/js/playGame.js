@@ -45,8 +45,8 @@
     var bomberDirection;
 
 function create() {
-    getScoresFromFirebase();
     initializeNumericalVariables();
+    getScoresFromFirebase();
 
   //add audio clips & sprites to game
     gameOverDelay = Infinity;
@@ -186,6 +186,7 @@ function update() {
     }
   }
   if (game.time.now > gameOverDelay) {
+    getScoresFromFirebase();
     if (checkForNewHighScore()) {
       var playerResponse = prompt("You got a high score! What are your initials?").toUpperCase();
       storePlayerScore(playerResponse);
@@ -400,10 +401,13 @@ function initializeNumericalVariables() {
     playerLaserCount = 0;
     nextLaserUpgradeTick = 0;
     scoreBeforeNextLaserUpgrade = 1000;
+    topTenScores = 0;
 }
 
 function checkForNewHighScore () {
-  if (finalScore > topTenScores[9].score) {
+  if (topTenScores === 0 || topTenScores.length < 10) {
+    return true
+  } else if (finalScore > topTenScores[9].score) {
     return true;
   } else {
     return false;
