@@ -186,12 +186,11 @@ function update() {
     }
   }
   if (game.time.now > gameOverDelay) {
-    getScoresFromFirebase();
     if (checkForNewHighScore()) {
       var playerResponse = prompt("You got a high score! What are your initials?").toUpperCase();
       storePlayerScore(playerResponse);
     }
-    game.state.start('gameOver', true, false, finalScore);
+    game.state.start('gameOver', true, false);
   }
 }
 
@@ -421,7 +420,7 @@ function getScoresFromFirebase () {
     var sortedScores =  _.sortBy(storedScores, 'score');
     topTenScores = sortedScores.slice(sortedScores.length -10, sortedScores.length).reverse();
     // _.forEach(topTenScores, function(scoreObj) {
-    // console.log(scoreObj.score);
+    // console.log(scoreObj.initials + ": " + scoreObj.score);
     // });
   });
 }
