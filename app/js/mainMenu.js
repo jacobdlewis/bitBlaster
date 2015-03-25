@@ -26,8 +26,8 @@
   function create(){
     game.add.sprite(0, 0, 'menu');
 
-    var spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    spacebar.onDown.add(startLvl1);
+    var ENTER = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    ENTER.onDown.add(startLvl1);
   }
 
   function startLvl1() {
