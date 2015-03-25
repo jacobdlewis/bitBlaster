@@ -72,7 +72,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 
   //create game score & clock
-    scoreText = game.add.text(8, 8, 'score: 0', { fontSize: '32px', fill: 'white' });
+    //scoreText = game.add.text(8, 8, 'score: 0', { fontSize: '32px', fill: 'white' });
     clock = game.time;
 
   //add physics to player's ship
@@ -346,7 +346,7 @@ function playerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
   blowUpShip(UFODeathEmitter, UFOShipGroup, 25);
   //  Add and update the score
   score += 100;
-  scoreText.text = 'Score: ' + score;
+  scoreText.text = 'SCORE: ' + score;
 
    if (score % 500 === 0 && maxUFOs < 9) {
     increaseUFOSpawnRateAndNumber();
@@ -359,7 +359,7 @@ function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
   explodeUFO.play('');
   blowUpShip(UFODeathEmitter, bomberShipGroup, 50);
   score += 900;
-  scoreText.text = 'Score: ' + score;
+  scoreText.text = 'SCORE: ' + score;
 }
 
 function playerTouchingUFO (player, UFOShipGroup) {
@@ -419,6 +419,8 @@ function getScoresFromFirebase () {
     var storedScores = snapshot.val();
     var sortedScores =  _.sortBy(storedScores, 'score');
     topTenScores = sortedScores.slice(sortedScores.length -10, sortedScores.length).reverse();
+    scoreText = game.add.text(8, 8, 'SCORE: 0', { fontSize: '32px', fill: 'white' });
+    game.add.text(320, 10, 'HIGH SCORE: ' + topTenScores[0].score, { fontSize: '32px', fill: 'white' })
     // _.forEach(topTenScores, function(scoreObj) {
     // console.log(scoreObj.initials + ": " + scoreObj.score);
     // });
