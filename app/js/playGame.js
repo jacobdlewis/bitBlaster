@@ -10,6 +10,7 @@
     var topTenScores;
     var playerInitials;
     var nextMuteTick= 0;
+    var bossfight = false;
 
     var laserUpgradeGroup;
     var playerLaserCount;
@@ -180,14 +181,21 @@ function update() {
     muteAllSound();
   }
 
-  // if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1000 === 0) {
-  //   addBomber();
-  // }
-
   //deathStar routines;
-  if (score === 0 && deathStarGroup.countLiving() < 1) {
+  if (score > 50000  && score < 55000  && deathStarGroup.countLiving () < 1 ||
+      score > 100000 && score < 105000 && deathStarGroup.countLiving () < 1 ||
+      score > 150000 && score < 155000 && deathStarGroup.countLiving () < 1 ||
+      score > 200000 && score < 205000 && deathStarGroup.countLiving () < 1 ||
+      score > 250000 && score < 255000 && deathStarGroup.countLiving () < 1
+      ) {
     addDeathStar();
-    nextDeathStarFireTick = game.time.now + 2000;
+    startBossFight();
+    nextDeathStarFireTick = game.time.now + 3000;
+  }
+  if (deathStar) {
+    if (deathStarHP < 0) {
+      killDeathStar();
+    }
   }
   if (deathStarGroup.countLiving() === 1) {
     if (game.time.now > nextDeathStarFireTick && deathStarHP > 90 || game.time.now > nextDeathStarFireTick && deathStarHP > 30 &&  deathStarHP < 60) {
@@ -197,13 +205,16 @@ function update() {
       deathStarMultiShot();
     }
   }
+  //deathstar movement routine
+  if (deathStar) {
+    if (deathStar.body.x > 490 && deathStar.body.x < 500) {
+      deathStar.body.velocity.x = -200;
+    }
+    if (deathStar.body.x < 10 && deathStar.body.x > 0) {
+      deathStar.body.velocity.x = 200;
+    }
+  }
 
-  if (deathStar.body.x > 490 && deathStar.body.x < 500) {
-    deathStar.body.velocity.x = -200;
-  }
-  if (deathStar.body.x < 10 && deathStar.body.x > 0) {
-    deathStar.body.velocity.x = 200;
-  }
   if (score !== 0 && score % scoreBeforeNextLaserUpgrade === 0 && game.time.now > nextLaserUpgradeTick) {
     dropLaserPowerUp();
   }
@@ -214,13 +225,17 @@ function update() {
     }
   }
 
-  // if (UFOShipGroup.countLiving() < maxUFOs) {
-  //   if (game.time.now > nextUFOTick) {
-  //     addUFO();
-  //     fireUFOBullet();
-  //     nextUFOTick = game.time.now + timeBeforeNextUFO;
-  //   }
-  // }
+  if (bossfight === false && bomberShipGroup.countLiving() === 0 && score !==0 && score % 1000 === 0) {
+    addBomber();
+  }
+
+  if (bossfight === false && UFOShipGroup.countLiving() < maxUFOs) {
+    if (game.time.now > nextUFOTick) {
+      addUFO();
+      fireUFOBullet();
+      nextUFOTick = game.time.now + timeBeforeNextUFO;
+    }
+  }
   if (game.time.now > gameOverDelay) {
     if (checkForNewHighScore()) {
       var playerResponse;
@@ -455,7 +470,7 @@ function dropLaserPowerUp () {
 function upgradeLaser() {
   powerUp.kill();
   playerLaserCount++;
-  scoreBeforeNextLaserUpgrade += 2500;
+  scoreBeforeNextLaserUpgrade += 5000;
   score += 2500;
   redrawScore();
 }
@@ -495,7 +510,7 @@ function playerBulletHitDeathStar (playerBulletGroup, deathStarGroup) {
   playerBulletGroup.kill();
   blowUpShip(UFODeathEmitter, playerBulletGroup, 20);
   deathStarHP -= 1;
-  score += 250;
+  score += 200;
   redrawScore();
 }
 
@@ -537,7 +552,7 @@ function stopSpriteMomentum (sprite) {
    sprite.body.velocity.y = 0;
 }
 
-function initializeVariables() {
+ function initializeVariables() {
   score = 0;
     bulletTime = 0;
     nextUFOTick = 0;
@@ -546,7 +561,7 @@ function initializeVariables() {
     UFOBulletTime = 0;
     nextBomberFireTick = 0;
     bomberDirection = true;
-    playerLaserCount = 3;
+    playerLaserCount = 0;
     nextLaserUpgradeTick = 0;
     scoreBeforeNextLaserUpgrade = 1000;
     topTenScores = 0;
@@ -596,7 +611,19 @@ function muteAllSound() {
     nextMuteTick = game.time.now + 500;
   }
 }
+function killDeathStar() {
+  blowUpShip(playerDeathEmitter, deathStar, 250);
+  deathStar.kill();
+  deathStarHP = 120;
+  bossfight = false;
+  score += 10000;
+  redrawScore();
+}
 
+function startBossFight() {
+  bossfight = true;
+  timeBeforeBossFight = game.time.now + 2000;
+}
 function gameOver () {
   mainTheme.stop();
   bulletTime = bulletTime + 8000000;
