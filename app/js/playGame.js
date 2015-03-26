@@ -1,6 +1,4 @@
-
-
-  game.state.add('playgame', {create:create, update: update, render: render});
+  game.state.add('playgame', { create:create, update: update });
 
     var starfield;
     var laser;
@@ -76,7 +74,6 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 
   //create game score & clock
-    //scoreText = game.add.text(8, 8, 'score: 0', { fontSize: '32px', fill: 'white' });
     clock = game.time;
 
   //add physics to player's ship
@@ -163,14 +160,14 @@ function update() {
   //player.body.velocity.y = 0;
 
   if (cursors.left.isDown) {
-    player.body.velocity.x = -200;
+    player.body.velocity.x = -225;
   } else if (cursors.right.isDown) {
-    player.body.velocity.x = 200;
+    player.body.velocity.x = 225;
   }
   if (cursors.up.isDown){
-    player.body.velocity.y = -200;
+    player.body.velocity.y = -225;
   } else if (cursors.down.isDown) {
-    player.body.velocity.y = 200;
+    player.body.velocity.y = 225;
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
@@ -181,14 +178,19 @@ function update() {
   //   addBomber();
   // }
 
+  //deathStar routines;
   if (score === 0 && deathStarGroup.countLiving() < 1) {
     addDeathStar();
   }
   if (deathStarGroup.countLiving() === 1) {
-    if (game.time.now > nextDeathStarFireTick && deathStarHP > 100) {
+    if (game.time.now > nextDeathStarFireTick && deathStarHP > 90 || game.time.now > nextDeathStarFireTick && deathStarHP > 30 &&  deathStarHP < 60) {
       deathStarBomb();
     }
+    else if (game.time.now > nextDeathStarFireTick && deathStarHP > 60 || game.time.now > nextDeathStarFireTick && deathStarHP > 0 && deathStarHP < 30) {
+      deathStarMultiShot();
+    }
   }
+
   if (deathStar.body.x > 490 && deathStar.body.x < 500) {
     deathStar.body.velocity.x = -200;
   }
@@ -305,6 +307,52 @@ function deathStarBomb () {
     bomberSound.play('', 0, .8);
 }
 
+function deathStarMultiShot () {
+  deathStarBullet1 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet1) {
+      deathStarBullet1.anchor.setTo(0.5, 0.5);
+      deathStarBullet1.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet1.animations.play('bomberBulletAnimation');
+      deathStarBullet1.reset(deathStar.x - 10, deathStar.y + 80);
+      game.physics.arcade.velocityFromAngle(120, 300, deathStarBullet1.body.velocity)
+    }
+  deathStarBullet2 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet2) {
+      deathStarBullet2.anchor.setTo(0.5, 0.5);
+      deathStarBullet2.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet2.animations.play('bomberBulletAnimation');
+      deathStarBullet2.reset(deathStar.x + 20, deathStar.y + 80);
+      game.physics.arcade.velocityFromAngle(105, 300, deathStarBullet2.body.velocity)
+    }
+  deathStarBullet3 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet3) {
+      deathStarBullet3.anchor.setTo(0.5, 0.5);
+      deathStarBullet3.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet3.animations.play('bomberBulletAnimation');
+      deathStarBullet3.reset(deathStar.x + 50, deathStar.y + 80);
+      game.physics.arcade.velocityFromAngle(90, 300, deathStarBullet3.body.velocity)
+    }
+  deathStarBullet4 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet4) {
+      deathStarBullet4.anchor.setTo(0.5, 0.5);
+      deathStarBullet4.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet4.animations.play('bomberBulletAnimation');
+      deathStarBullet4.reset(deathStar.x + 80, deathStar.y + 80);
+      game.physics.arcade.velocityFromAngle(75, 300, deathStarBullet4.body.velocity)
+    }
+  deathStarBullet5 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet5) {
+      deathStarBullet5.anchor.setTo(0.5, 0.5);
+      deathStarBullet5.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet5.animations.play('bomberBulletAnimation');
+      deathStarBullet5.reset(deathStar.x + 110, deathStar.y + 80);
+      game.physics.arcade.velocityFromAngle(60, 300, deathStarBullet5.body.velocity)
+    }
+    nextDeathStarFireTick = game.time.now + 500;
+    bomberSound.play('', 0, .8);
+}
+
+
 function addUFO () {
   UFO = UFOShipGroup.create((Math.random() * 570), (Math.random() * 70) + 30, 'UFOShipGroup', game.rnd.integerInRange(0, 20));
   UFO.body.setSize(25, 25, 3, -1);
@@ -401,6 +449,7 @@ function upgradeLaser() {
   powerUp.kill();
   playerLaserCount++;
   scoreBeforeNextLaserUpgrade += 2500;
+  score += 2500;
 }
 
 function blowUpShip (emitter, shipHit, numEmittedParticles) {
@@ -484,7 +533,7 @@ function initializeVariables() {
     UFOBulletTime = 0;
     nextBomberFireTick = 0;
     bomberDirection = true;
-    playerLaserCount = 0;
+    playerLaserCount = 3;
     nextLaserUpgradeTick = 0;
     scoreBeforeNextLaserUpgrade = 1000;
     topTenScores = 0;
