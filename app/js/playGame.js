@@ -9,8 +9,8 @@
     var finalScore;
     var topTenScores;
     var playerInitials;
-    var nextMuteTick= 0;
-    var bossfight = false;
+    var nextMuteTick;
+    var bossfight;
 
     var laserUpgradeGroup;
     var playerLaserCount;
@@ -567,6 +567,8 @@ function stopSpriteMomentum (sprite) {
     topTenScores = 0;
     nextDeathStarFireTick = 0
     deathStarHP = 120;
+    nextMuteTick = 0;
+    bossfight = false;
 }
 
 function checkForNewHighScore () {
