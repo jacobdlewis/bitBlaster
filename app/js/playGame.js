@@ -9,6 +9,7 @@
     var finalScore;
     var topTenScores;
     var playerInitials;
+    var nextMuteTick= 0;
 
     var laserUpgradeGroup;
     var playerLaserCount;
@@ -149,6 +150,7 @@ function update() {
   game.physics.arcade.collide(UFOShipGroup, UFOShipGroup);
   game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
   game.physics.arcade.collide(playerBulletGroup, deathStarGroup, playerBulletHitDeathStar);
+  game.physics.arcade.collide(player, deathStar, playerTouchingDeathStar);
   // game.physics.arcade.collide(deathStarGroup, game.world.bounds, deathStarRoutine1);
 
   //scroll starfield background vertically
@@ -174,6 +176,10 @@ function update() {
     playerFireBullet();
   }
 
+  if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    muteAllSound();
+  }
+
   // if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1000 === 0) {
   //   addBomber();
   // }
@@ -181,6 +187,7 @@ function update() {
   //deathStar routines;
   if (score === 0 && deathStarGroup.countLiving() < 1) {
     addDeathStar();
+    nextDeathStarFireTick = game.time.now + 2000;
   }
   if (deathStarGroup.countLiving() === 1) {
     if (game.time.now > nextDeathStarFireTick && deathStarHP > 90 || game.time.now > nextDeathStarFireTick && deathStarHP > 30 &&  deathStarHP < 60) {
@@ -450,6 +457,7 @@ function upgradeLaser() {
   playerLaserCount++;
   scoreBeforeNextLaserUpgrade += 2500;
   score += 2500;
+  redrawScore();
 }
 
 function blowUpShip (emitter, shipHit, numEmittedParticles) {
@@ -476,7 +484,7 @@ function playerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
   blowUpShip(UFODeathEmitter, UFOShipGroup, 25);
   //  Add and update the score
   score += 100;
-  scoreText.text = 'SCORE: ' + score;
+  redrawScore();
 
    if (score % 500 === 0 && maxUFOs < 9) {
     increaseUFOSpawnRateAndNumber();
@@ -487,6 +495,8 @@ function playerBulletHitDeathStar (playerBulletGroup, deathStarGroup) {
   playerBulletGroup.kill();
   blowUpShip(UFODeathEmitter, playerBulletGroup, 20);
   deathStarHP -= 1;
+  score += 250;
+  redrawScore();
 }
 
 function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
@@ -495,9 +505,12 @@ function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
   explodeUFO.play('');
   blowUpShip(UFODeathEmitter, bomberShipGroup, 50);
   score += 900;
-  scoreText.text = 'SCORE: ' + score;
+  redrawScore();
 }
-
+function playerTouchingDeathStar (player, deathStar) {
+  player.kill();
+  gameOver();
+}
 function playerTouchingUFO (player, UFOShipGroup) {
   player.kill();
   UFOShipGroup.kill();
@@ -564,11 +577,24 @@ function getScoresFromFirebase () {
     // });
   });
 }
+function redrawScore() {
+  scoreText.text = 'SCORE: ' + score;
+}
 
 function storePlayerScore(initials) {
   var fb = new Firebase('https://bitblaster.firebaseio.com/');
   var fbRef = fb.push();
   fbRef.set({ score: score, id: fbRef.key(), initials: initials });
+}
+
+function muteAllSound() {
+  if (game.sound.mute && game.time.now > nextMuteTick) {
+    game.sound.mute = false;
+    nextMuteTick = game.time.now + 500;
+  } else if (!game.sound.mute && game.time.now > nextMuteTick) {
+    game.sound.mute = true;
+    nextMuteTick = game.time.now + 500;
+  }
 }
 
 function gameOver () {
