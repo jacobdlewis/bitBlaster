@@ -10,7 +10,8 @@
     game.load.image('UFOShipGroup', 'app/assets/UFOShip.png');
     game.load.image('menu', 'app/assets/startingMenu.png');
     game.load.image('gameOverMenu', 'app/assets/gameOver.png');
-    game.load.image('bomberShip', 'app/assets/bomberShip.png')
+    game.load.image('bomberShip', 'app/assets/bomberShip.png');
+    game.load.spritesheet('deathStarGroup', 'app/assets/deathStarMotion.png', 100, 100, 5);
     game.load.spritesheet('bomberBullet', 'app/assets/bomberBullet.png', 12, 12, 2);
     game.load.image('UFODeathParticle', 'app/assets/UFODeathParticle.png');
     game.load.spritesheet('UFOBullet', 'app/assets/UFOBulletAnimation.png', 10, 9, 2);

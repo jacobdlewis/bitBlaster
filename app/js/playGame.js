@@ -1,6 +1,6 @@
 
-(function(){
-  game.state.add('playgame', {create:create, update: update});
+
+  game.state.add('playgame', {create:create, update: update, render: render});
 
     var starfield;
     var laser;
@@ -36,6 +36,10 @@
     var explodeUFO;
     var UFOshotSound;
 
+    var deathStarGroup;
+    var deathStar;
+    var deathStarHP;
+
     var bomberShipGroup;
     var bomberSound;
     var bomber;
@@ -45,7 +49,7 @@
     var bomberDirection;
 
 function create() {
-    initializeNumericalVariables();
+    initializeVariables();
     getScoresFromFirebase();
 
   //add audio clips & sprites to game
@@ -120,6 +124,13 @@ function create() {
     bomberBulletGroup.setAll('checkWorldBounds', true);
     bomberBulletGroup.setAll('outOfBoundsKill', true);
 
+  //deathStarGroup
+    deathStarGroup = game.add.group();
+    deathStarGroup.enableBody = true;
+    //deathStarGroup.physicsBodyType = Phaser.Physics.ARCADE;
+    deathStarGroup.setAll('checkWorldBounds', true);
+    deathStarGroup.setAll('outOfBoundsKill', true);
+
   //laserUpgradeGroup
     laserUpgradeGroup = game.add.group();
     laserUpgradeGroup.enableBody = true;
@@ -140,6 +151,8 @@ function update() {
   game.physics.arcade.collide(playerBulletGroup, bomberShipGroup, playerBulletHitBomber);
   game.physics.arcade.collide(UFOShipGroup, UFOShipGroup);
   game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
+  game.physics.arcade.collide(playerBulletGroup, deathStarGroup, playerBulletHitDeathStar);
+  // game.physics.arcade.collide(deathStarGroup, game.world.bounds, deathStarRoutine1);
 
   //scroll starfield background vertically
   starfield.tilePosition.y += 3;
@@ -164,10 +177,24 @@ function update() {
     playerFireBullet();
   }
 
-  if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1000 === 0) {
-    addBomber();
-  }
+  // if (bomberShipGroup.countLiving() === 0 && score !==0 && score % 1000 === 0) {
+  //   addBomber();
+  // }
 
+  if (score === 0 && deathStarGroup.countLiving() < 1) {
+    addDeathStar();
+  }
+  if (deathStarGroup.countLiving() === 1) {
+    if (game.time.now > nextDeathStarFireTick && deathStarHP > 100) {
+      deathStarBomb();
+    }
+  }
+  if (deathStar.body.x > 490 && deathStar.body.x < 500) {
+    deathStar.body.velocity.x = -200;
+  }
+  if (deathStar.body.x < 10 && deathStar.body.x > 0) {
+    deathStar.body.velocity.x = 200;
+  }
   if (score !== 0 && score % scoreBeforeNextLaserUpgrade === 0 && game.time.now > nextLaserUpgradeTick) {
     dropLaserPowerUp();
   }
@@ -178,13 +205,13 @@ function update() {
     }
   }
 
-  if (UFOShipGroup.countLiving() < maxUFOs) {
-    if (game.time.now > nextUFOTick) {
-      addUFO();
-      fireUFOBullet();
-      nextUFOTick = game.time.now + timeBeforeNextUFO;
-    }
-  }
+  // if (UFOShipGroup.countLiving() < maxUFOs) {
+  //   if (game.time.now > nextUFOTick) {
+  //     addUFO();
+  //     fireUFOBullet();
+  //     nextUFOTick = game.time.now + timeBeforeNextUFO;
+  //   }
+  // }
   if (game.time.now > gameOverDelay) {
     if (checkForNewHighScore()) {
       var playerResponse;
@@ -202,6 +229,7 @@ function update() {
     game.state.start('gameOver', true, false);
   }
 }
+
 
 //functions
 function addBomber () {
@@ -231,6 +259,50 @@ function fireBomberBullet () {
       nextBomberFireTick = game.time.now + 250;
       bomberSound.play('', 0, .8);
     }
+}
+
+function addDeathStar () {
+  deathStar = deathStarGroup.create(250, 50, 'deathStarGroup');
+  deathStar.animations.add('deathStarAnimation', [0, 1, 2, 3, 4, 4, 4], 8, true);
+  deathStar.animations.play('deathStarAnimation');
+  deathStar.enableBody = true;
+  deathStar.body.setSize(100, 100, 0, 0);
+  deathStar.body.immovable = true;
+  deathStar.body.collideWorldBounds = true;
+  deathStar.anchor.setTo = (0.5, 0.5);
+  deathStar.body.velocity.y = 0;
+  deathStar.body.velocity.x = 200;
+  deathStar.checkWorldBounds = true;
+  deathStar.outOfBoundsKill = true;
+}
+
+function deathStarBomb () {
+  deathStarBullet = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet) {
+      deathStarBullet.anchor.setTo(0.5, 0.5);
+      deathStarBullet.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet.animations.play('bomberBulletAnimation');
+      deathStarBullet.reset(deathStar.x + 50, deathStar.y + 80);
+      deathStarBullet.body.velocity.y = 300;
+    }
+  deathStarBullet2 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet2) {
+      deathStarBullet2.anchor.setTo(0.5, 0.5);
+      deathStarBullet2.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet2.animations.play('bomberBulletAnimation');
+      deathStarBullet2.reset(deathStar.x - 10, deathStar.y + 80);
+      deathStarBullet2.body.velocity.y = 300;
+    }
+  deathStarBullet3 = bomberBulletGroup.getFirstExists(false);
+  if (deathStarBullet3) {
+      deathStarBullet3.anchor.setTo(0.5, 0.5);
+      deathStarBullet3.animations.add('bomberBulletAnimation', [0, 1], 5, true);
+      deathStarBullet3.animations.play('bomberBulletAnimation');
+      deathStarBullet3.reset(deathStar.x + 110, deathStar.y + 80);
+      deathStarBullet3.body.velocity.y = 300;
+    }
+    nextDeathStarFireTick = game.time.now + 500;
+    bomberSound.play('', 0, .8);
 }
 
 function addUFO () {
@@ -274,7 +346,7 @@ function playerFireBullet () {
       bullet.reset(player.x , player.y - 20);
       bullet.body.velocity.y = -350;
       bulletTime = game.time.now + 350;
-      laser.play('');
+      laser.play('', 0, .6, false);
     }
     if (playerLaserCount > 0) {
     bullet2 = playerBulletGroup.getFirstExists(false);
@@ -362,6 +434,12 @@ function playerBulletHitUFO (playerBulletGroup, UFOShipGroup) {
   }
 }
 
+function playerBulletHitDeathStar (playerBulletGroup, deathStarGroup) {
+  playerBulletGroup.kill();
+  blowUpShip(UFODeathEmitter, playerBulletGroup, 20);
+  deathStarHP -= 1;
+}
+
 function playerBulletHitBomber (playerBulletGroup, bomberShipGroup){
   playerBulletGroup.kill();
   bomberShipGroup.kill();
@@ -397,7 +475,7 @@ function stopSpriteMomentum (sprite) {
    sprite.body.velocity.y = 0;
 }
 
-function initializeNumericalVariables() {
+function initializeVariables() {
   score = 0;
     bulletTime = 0;
     nextUFOTick = 0;
@@ -410,6 +488,8 @@ function initializeNumericalVariables() {
     nextLaserUpgradeTick = 0;
     scoreBeforeNextLaserUpgrade = 1000;
     topTenScores = 0;
+    nextDeathStarFireTick = 0
+    deathStarHP = 120;
 }
 
 function checkForNewHighScore () {
@@ -453,4 +533,3 @@ function gameOver () {
   checkForNewHighScore();
 }
 
-})();
