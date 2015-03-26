@@ -206,7 +206,7 @@ function update() {
     }
   }
   //deathstar movement routine
-  if (deathStar) {
+  if (deathStarGroup.countLiving() > 0) {
     if (deathStar.body.x > 490 && deathStar.body.x < 500) {
       deathStar.body.velocity.x = -200;
     }
