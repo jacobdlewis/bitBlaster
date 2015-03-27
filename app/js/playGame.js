@@ -152,15 +152,10 @@ function update() {
   game.physics.arcade.collide(UFOShipGroup, game.world.bounds);
   game.physics.arcade.collide(playerBulletGroup, deathStarGroup, playerBulletHitDeathStar);
   game.physics.arcade.collide(player, deathStar, playerTouchingDeathStar);
-  // game.physics.arcade.collide(deathStarGroup, game.world.bounds, deathStarRoutine1);
 
-  //scroll starfield background vertically
   starfield.tilePosition.y += 3;
 
-  //check for input to move player
   stopSpriteMomentum(player);
-  //player.body.velocity.x = 0;
-  //player.body.velocity.y = 0;
 
   if (cursors.left.isDown) {
     player.body.velocity.x = -225;
@@ -253,7 +248,6 @@ function update() {
     game.state.start('gameOver', true, false);
   }
 }
-
 
 //functions
 function addBomber () {
@@ -589,9 +583,6 @@ function getScoresFromFirebase () {
     topTenScores = sortedScores.slice(sortedScores.length -10, sortedScores.length).reverse();
     scoreText = game.add.text(8, 8, 'SCORE: 0', { fontSize: '32px', fill: 'white' });
     game.add.text(320, 10, 'HIGH SCORE: ' + topTenScores[0].score, { fontSize: '32px', fill: 'white' })
-    // _.forEach(topTenScores, function(scoreObj) {
-    // console.log(scoreObj.initials + ": " + scoreObj.score);
-    // });
   });
 }
 function redrawScore() {
