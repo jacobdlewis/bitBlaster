@@ -50,6 +50,7 @@
     var bomberDirection;
 
 function create() {
+    starfield = game.add.tileSprite(0, 0, 600, 600, 'starfield');
     scoreText = game.add.text(8, 8, 'SCORE: ', { fontSize: '32px', fill: 'white' });
 
     initializeVariables();
@@ -59,7 +60,6 @@ function create() {
     gameOverDelay = Infinity;
     laser = game.add.audio('laser');
     explodeUFO = game.add.audio('explodeUFO');
-    starfield = game.add.tileSprite(0, 0, 600, 600, 'starfield');
     player = game.add.sprite(200, 580, 'player');
     playerDeathEmitter = game.add.emitter(0, 0, 100);
     playerDeathEmitter.makeParticles('playerDeathParticle');
