@@ -4,8 +4,8 @@
 <h4>Overview</h4>
   <p> Shoot enemy ships to earn points, and avoid their flashing bullets to stay alive. Stay alive long enough, and you'll fight the boss of deep space.</p>
 <h4>Controls</h4>
-  **Move ship** with directional arrows
-  **Fire lasers** with space bar
+  <div>**Move ship** with directional arrows</div>
+  <div>**Fire lasers** with space bar</div>
 <h4>Legend</h4>
   <div><img src="app/assets/heroShip.png"> - <strong>player ship</strong></div>
   <div><img src="app/assets/UFOShip.png"> - <strong>enemy UFO</strong></div>

@@ -1,3 +1,4 @@
+(function(){
   game.state.add('playgame', { create:create, update: update });
 
     var starfield;
@@ -49,7 +50,7 @@
     var bomberDirection;
 
 function create() {
-    scoreText = game.add.text(8, 8, 'SCORE: 0', { fontSize: '32px', fill: 'white' });
+    scoreText = game.add.text(8, 8, 'SCORE: ', { fontSize: '32px', fill: 'white' });
 
     initializeVariables();
     getScoresFromFirebase();
@@ -640,3 +641,4 @@ function gameOver () {
   checkForNewHighScore();
 }
 
+})();
