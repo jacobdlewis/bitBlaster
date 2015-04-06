@@ -55,7 +55,7 @@
     if (leaderboard[9]) {
       game.add.text(200, 440, "10. " +leaderboard[9].initials + '     ' + leaderboard[9].score, { fontSize: '32px', fill: 'white' });
     }
-    game.add.text(130, 490, '- press SPACE to restart -', { fontSize: '32px', fill: 'white' });
+    game.add.text(110, 490, 'press -SPACE- to restart', { fontSize: '32px', fill: 'white' });
 
     //addScore();
     var spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
